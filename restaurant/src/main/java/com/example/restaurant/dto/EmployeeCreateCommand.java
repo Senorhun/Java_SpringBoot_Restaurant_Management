@@ -15,6 +15,6 @@ public class EmployeeCreateCommand {
     private String email;
     @NotNull
     private EmployeeType employeeType;
-    @NotNull
+
     private Long restaurant_id;
 }
