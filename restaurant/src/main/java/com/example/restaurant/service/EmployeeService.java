@@ -25,6 +25,10 @@ public class EmployeeService {
     private Employee findEmployeeById(Long id) {
         return employeeRepository.findById(id).orElse(null);
     }
+    public EmployeeInfo getEmployeeById(Long id) {
+        Employee employee = findEmployeeById(id);
+        return modelMapper.map(employee, EmployeeInfo.class);
+    }
     public EmployeeInfo save(@Valid EmployeeCreateCommand command) {
         Employee employeeToSave = modelMapper.map(command, Employee.class);
         Employee savedEmployee = employeeRepository.save(employeeToSave);

@@ -27,6 +27,11 @@ public class EmployeeController {
         EmployeeInfo employeeInfo = employeeService.save(command);
         return new ResponseEntity<>(employeeInfo, HttpStatus.CREATED);
     }
+    @GetMapping("/{id}")
+    public ResponseEntity<EmployeeInfo> getById(@PathVariable Long id) {
+        EmployeeInfo employeeInfo = employeeService.getEmployeeById(id);
+        return new ResponseEntity<>(employeeInfo, HttpStatus.FOUND);
+    }
     @GetMapping
     public ResponseEntity<List<EmployeeInfo>> findAll() {
         List<EmployeeInfo> employeeInfoList = employeeService.listEmployees();
