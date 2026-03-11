@@ -2,6 +2,7 @@ package com.example.restaurant.service;
 
 import com.example.restaurant.dto.EmployeeCreateCommand;
 import com.example.restaurant.dto.EmployeeInfo;
+import com.example.restaurant.exceptionhandling.EmployeeNotFoundException;
 import com.example.restaurant.model.Employee;
 import com.example.restaurant.repository.EmployeeRepository;
 import jakarta.transaction.Transactional;
@@ -23,7 +24,7 @@ public class EmployeeService {
         this.modelMapper = modelMapper;
     }
     private Employee findEmployeeById(Long id) {
-        return employeeRepository.findById(id).orElse(null);
+        return employeeRepository.findById(id).orElseThrow(() -> new EmployeeNotFoundException(id));
     }
     public EmployeeInfo getEmployeeById(Long id) {
         Employee employee = findEmployeeById(id);
