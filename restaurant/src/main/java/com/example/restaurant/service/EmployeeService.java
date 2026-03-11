@@ -22,7 +22,9 @@ public class EmployeeService {
         this.employeeRepository = employeeRepository;
         this.modelMapper = modelMapper;
     }
-
+    private Employee findEmployeeById(Long id) {
+        return employeeRepository.findById(id).orElse(null);
+    }
     public EmployeeInfo save(@Valid EmployeeCreateCommand command) {
         Employee employeeToSave = modelMapper.map(command, Employee.class);
         Employee savedEmployee = employeeRepository.save(employeeToSave);
@@ -32,5 +34,9 @@ public class EmployeeService {
         return employeeRepository.findAll().stream()
                 .map(employee -> modelMapper.map(employee, EmployeeInfo.class))
                 .collect(Collectors.toList());
+    }
+    public void delete(Long id) {
+        Employee employeeToDelete = findEmployeeById(id);
+        employeeRepository.delete(employeeToDelete);
     }
 }

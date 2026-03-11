@@ -32,5 +32,9 @@ public class EmployeeController {
         List<EmployeeInfo> employeeInfoList = employeeService.listEmployees();
         return new ResponseEntity<>(employeeInfoList, HttpStatus.OK);
     }
-
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
+        employeeService.delete(id);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
 }
