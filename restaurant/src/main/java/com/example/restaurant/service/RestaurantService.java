@@ -9,6 +9,9 @@ import jakarta.validation.Valid;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Service
 @Transactional
 public class RestaurantService {
@@ -24,5 +27,10 @@ public class RestaurantService {
         Restaurant restaurantToSave = modelMapper.map(command, Restaurant.class);
         Restaurant savedRestaurant = restaurantRepository.save(restaurantToSave);
         return modelMapper.map(savedRestaurant, RestaurantInfo.class);
+    }
+    public List<RestaurantInfo> findAll() {
+        return restaurantRepository.findAll().stream()
+                .map(restaurant -> modelMapper.map(restaurant, RestaurantInfo.class))
+                .collect(Collectors.toList());
     }
 }
