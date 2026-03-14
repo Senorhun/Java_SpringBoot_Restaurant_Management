@@ -34,4 +34,9 @@ public class RestaurantController {
         RestaurantInfo restaurantInfo = restaurantService.getById(id);
         return new ResponseEntity<>(restaurantInfo, HttpStatus.FOUND);
     }
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteById(@PathVariable Long id) {
+        restaurantService.deleteById(id);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
 }
