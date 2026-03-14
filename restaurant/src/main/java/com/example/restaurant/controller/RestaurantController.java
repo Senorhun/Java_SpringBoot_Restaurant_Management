@@ -29,4 +29,9 @@ public class RestaurantController {
         List<RestaurantInfo> restaurantInfoList = restaurantService.findAll();
         return new ResponseEntity<>(restaurantInfoList, HttpStatus.OK);
     }
+    @GetMapping("/{id}")
+    public ResponseEntity<RestaurantInfo> findById(@PathVariable Long id) {
+        RestaurantInfo restaurantInfo = restaurantService.getById(id);
+        return new ResponseEntity<>(restaurantInfo, HttpStatus.FOUND);
+    }
 }
