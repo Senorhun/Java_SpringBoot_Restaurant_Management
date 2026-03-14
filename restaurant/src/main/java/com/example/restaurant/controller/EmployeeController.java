@@ -34,11 +34,11 @@ public class EmployeeController {
     }
     @GetMapping
     public ResponseEntity<List<EmployeeInfo>> findAll() {
-        List<EmployeeInfo> employeeInfoList = employeeService.listEmployees();
+        List<EmployeeInfo> employeeInfoList = employeeService.findAll();
         return new ResponseEntity<>(employeeInfoList, HttpStatus.OK);
     }
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteByID(@PathVariable Long id) {
         employeeService.delete(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
