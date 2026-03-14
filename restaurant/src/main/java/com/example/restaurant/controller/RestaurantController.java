@@ -7,10 +7,9 @@ import com.example.restaurant.service.RestaurantService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/restaurant")
@@ -24,5 +23,10 @@ public class RestaurantController {
     public ResponseEntity<RestaurantInfo> save(@Valid @RequestBody RestaurantCreateCommand command) {
         RestaurantInfo restaurantInfo = restaurantService.save(command);
         return new ResponseEntity<>(restaurantInfo, HttpStatus.OK);
+    }
+    @GetMapping
+    public ResponseEntity<List<RestaurantInfo>> findAll(){
+        List<RestaurantInfo> restaurantInfoList = restaurantService.findAll();
+        return new ResponseEntity<>(restaurantInfoList, HttpStatus.OK);
     }
 }
