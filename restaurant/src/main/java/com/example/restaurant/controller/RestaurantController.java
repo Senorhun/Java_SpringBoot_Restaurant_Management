@@ -22,7 +22,7 @@ public class RestaurantController {
     @PostMapping
     public ResponseEntity<RestaurantInfo> save(@Valid @RequestBody RestaurantCreateCommand command) {
         RestaurantInfo restaurantInfo = restaurantService.save(command);
-        return new ResponseEntity<>(restaurantInfo, HttpStatus.OK);
+        return new ResponseEntity<>(restaurantInfo, HttpStatus.CREATED);
     }
     @GetMapping
     public ResponseEntity<List<RestaurantInfo>> findAll(){

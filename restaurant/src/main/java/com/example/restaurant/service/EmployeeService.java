@@ -35,7 +35,7 @@ public class EmployeeService {
         Employee savedEmployee = employeeRepository.save(employeeToSave);
         return modelMapper.map(savedEmployee, EmployeeInfo.class);
     }
-    public List<EmployeeInfo> listEmployees(){
+    public List<EmployeeInfo> findAll(){
         return employeeRepository.findAll().stream()
                 .map(employee -> modelMapper.map(employee, EmployeeInfo.class))
                 .collect(Collectors.toList());
