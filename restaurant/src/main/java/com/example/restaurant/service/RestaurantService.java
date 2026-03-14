@@ -2,6 +2,7 @@ package com.example.restaurant.service;
 
 import com.example.restaurant.dto.RestaurantCreateCommand;
 import com.example.restaurant.dto.RestaurantInfo;
+import com.example.restaurant.exceptionhandling.RestaurantNotFoundException;
 import com.example.restaurant.model.Restaurant;
 import com.example.restaurant.repository.RestaurantRepository;
 import jakarta.transaction.Transactional;
@@ -32,5 +33,12 @@ public class RestaurantService {
         return restaurantRepository.findAll().stream()
                 .map(restaurant -> modelMapper.map(restaurant, RestaurantInfo.class))
                 .collect(Collectors.toList());
+    }
+    private Restaurant findById(Long id) {
+        return restaurantRepository.findById(id).orElseThrow(() -> new RestaurantNotFoundException(id));
+    }
+    public RestaurantInfo getById(Long id) {
+        Restaurant restaurant = findById(id);
+        return modelMapper.map(restaurant, RestaurantInfo.class);
     }
 }

@@ -31,5 +31,12 @@ public class GlobalExceptionHandler {
         log.error("Error in validation: " + validationError.getField() + ": " + validationError.getErrorMessage());
         return new ResponseEntity<>(List.of(validationError), HttpStatus.BAD_REQUEST);
     }
+    @ExceptionHandler(RestaurantNotFoundException.class)
+    public ResponseEntity<List<ValidationError>> handleRestaurantNotFoundException(RestaurantNotFoundException exception) {
+        ValidationError validationError = new ValidationError("restaurant_id",
+                "Restaurant not found with id: " + exception.getRestaurantId());
+        log.error("Error in validation: " + validationError.getField() + ": " + validationError.getErrorMessage());
+        return new ResponseEntity<>(List.of(validationError), HttpStatus.BAD_REQUEST);
+    }
 
 }
