@@ -41,4 +41,8 @@ public class RestaurantService {
         Restaurant restaurant = findById(id);
         return modelMapper.map(restaurant, RestaurantInfo.class);
     }
+    public void deleteById(Long id) {
+        Restaurant restaurantToDelete = findById(id);
+        restaurantRepository.delete(restaurantToDelete);
+    }
 }
