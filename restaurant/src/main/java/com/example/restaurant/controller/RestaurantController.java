@@ -1,5 +1,6 @@
 package com.example.restaurant.controller;
 
+import com.example.restaurant.dto.EmployeeInfo;
 import com.example.restaurant.dto.RestaurantCreateCommand;
 import com.example.restaurant.dto.RestaurantInfo;
 import com.example.restaurant.model.Restaurant;
@@ -38,5 +39,9 @@ public class RestaurantController {
     public ResponseEntity<Void> deleteById(@PathVariable Long id) {
         restaurantService.deleteById(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+    @GetMapping("/{restaurantId}/employees")
+    public List<EmployeeInfo> getEmployeesByRestaurant(@PathVariable Long restaurantId) {
+        return restaurantService.getEmployeesByRestaurant(restaurantId);
     }
 }

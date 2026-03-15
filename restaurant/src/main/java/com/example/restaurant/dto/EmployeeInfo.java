@@ -8,4 +8,5 @@ public class EmployeeInfo {
     private String name;
     private String email;
     private EmployeeType employeeType;
+    private String restaurantName;
 }
