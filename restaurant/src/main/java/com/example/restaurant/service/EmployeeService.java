@@ -4,7 +4,9 @@ import com.example.restaurant.dto.EmployeeCreateCommand;
 import com.example.restaurant.dto.EmployeeInfo;
 import com.example.restaurant.exceptionhandling.EmployeeNotFoundException;
 import com.example.restaurant.model.Employee;
+import com.example.restaurant.model.Restaurant;
 import com.example.restaurant.repository.EmployeeRepository;
+import com.example.restaurant.repository.RestaurantRepository;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import org.modelmapper.ModelMapper;
@@ -17,11 +19,13 @@ import java.util.stream.Collectors;
 @Transactional
 public class EmployeeService {
     private final EmployeeRepository employeeRepository;
+    private final RestaurantService restaurantService;
     private final ModelMapper modelMapper;
 
-    public EmployeeService(EmployeeRepository employeeRepository, ModelMapper modelMapper) {
+    public EmployeeService(EmployeeRepository employeeRepository, ModelMapper modelMapper, RestaurantService restaurantService ) {
         this.employeeRepository = employeeRepository;
         this.modelMapper = modelMapper;
+        this.restaurantService = restaurantService;
     }
     private Employee findEmployeeById(Long id) {
         return employeeRepository.findById(id).orElseThrow(() -> new EmployeeNotFoundException(id));
@@ -32,6 +36,8 @@ public class EmployeeService {
     }
     public EmployeeInfo save(@Valid EmployeeCreateCommand command) {
         Employee employeeToSave = modelMapper.map(command, Employee.class);
+        Restaurant restaurant = restaurantService.findById(command.getRestaurantId());
+        employeeToSave.setRestaurant(restaurant);
         Employee savedEmployee = employeeRepository.save(employeeToSave);
         return modelMapper.map(savedEmployee, EmployeeInfo.class);
     }
