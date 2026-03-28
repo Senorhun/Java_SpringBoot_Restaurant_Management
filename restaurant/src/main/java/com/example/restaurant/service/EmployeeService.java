@@ -39,7 +39,9 @@ public class EmployeeService {
         Restaurant restaurant = restaurantService.findById(command.getRestaurantId());
         employeeToSave.setRestaurant(restaurant);
         Employee savedEmployee = employeeRepository.save(employeeToSave);
-        return modelMapper.map(savedEmployee, EmployeeInfo.class);
+        EmployeeInfo employeeInfo = modelMapper.map(savedEmployee, EmployeeInfo.class);
+        employeeInfo.setRestaurantName(savedEmployee.getRestaurant().getName());
+        return employeeInfo;
     }
     public List<EmployeeInfo> findAll(){
         return employeeRepository.findAll().stream()
