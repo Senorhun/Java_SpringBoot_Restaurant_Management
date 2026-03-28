@@ -45,9 +45,13 @@ public class EmployeeService {
     }
     public List<EmployeeInfo> findAll(){
         return employeeRepository.findAll().stream()
-                .map(employee -> modelMapper.map(employee, EmployeeInfo.class))
-                .collect(Collectors.toList());
+                .map(employee -> {
+                    EmployeeInfo employeeInfo = modelMapper.map(employee,EmployeeInfo.class);
+                    employeeInfo.setRestaurantName(employee.getRestaurant().getName());
+                    return employeeInfo;
+                }).toList();
     }
+
     public void delete(Long id) {
         Employee employeeToDelete = findEmployeeById(id);
         employeeRepository.delete(employeeToDelete);
