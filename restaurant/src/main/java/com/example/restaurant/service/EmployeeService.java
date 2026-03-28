@@ -6,14 +6,12 @@ import com.example.restaurant.exceptionhandling.EmployeeNotFoundException;
 import com.example.restaurant.model.Employee;
 import com.example.restaurant.model.Restaurant;
 import com.example.restaurant.repository.EmployeeRepository;
-import com.example.restaurant.repository.RestaurantRepository;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -32,7 +30,9 @@ public class EmployeeService {
     }
     public EmployeeInfo getEmployeeById(Long id) {
         Employee employee = findEmployeeById(id);
-        return modelMapper.map(employee, EmployeeInfo.class);
+        EmployeeInfo employeeInfo = modelMapper.map(employee, EmployeeInfo.class);
+        employeeInfo.setRestaurantName(employee.getRestaurant().getName());
+        return employeeInfo;
     }
     public EmployeeInfo save(@Valid EmployeeCreateCommand command) {
         Employee employeeToSave = modelMapper.map(command, Employee.class);
@@ -51,7 +51,6 @@ public class EmployeeService {
                     return employeeInfo;
                 }).toList();
     }
-
     public void delete(Long id) {
         Employee employeeToDelete = findEmployeeById(id);
         employeeRepository.delete(employeeToDelete);
