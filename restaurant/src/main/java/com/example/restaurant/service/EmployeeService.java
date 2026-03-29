@@ -5,6 +5,7 @@ import com.example.restaurant.dto.EmployeeInfo;
 import com.example.restaurant.dto.EmployeeUpdateCommand;
 import com.example.restaurant.exceptionhandling.EmployeeNotFoundException;
 import com.example.restaurant.model.Employee;
+import com.example.restaurant.model.EmployeeType;
 import com.example.restaurant.model.Restaurant;
 import com.example.restaurant.repository.EmployeeRepository;
 import jakarta.transaction.Transactional;
@@ -12,7 +13,9 @@ import jakarta.validation.Valid;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -64,5 +67,15 @@ public class EmployeeService {
         Restaurant restaurant = restaurantService.findById(command.getRestaurantId());
         employeeInfo.setRestaurantName(restaurant.getName());
         return employeeInfo;
+    }
+
+    public List<EmployeeInfo> getByType(EmployeeType type) {
+        List<Employee> employees = employeeRepository.getByType(type);
+        return employees.stream()
+                .map(employee -> {
+                    EmployeeInfo employeeInfo = modelMapper.map(employee, EmployeeInfo.class );
+                    employeeInfo.setRestaurantName(employee.getRestaurant().getName());
+                    return employeeInfo;
+                }).toList();
     }
 }

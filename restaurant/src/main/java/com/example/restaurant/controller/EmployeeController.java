@@ -3,6 +3,7 @@ package com.example.restaurant.controller;
 import com.example.restaurant.dto.EmployeeCreateCommand;
 import com.example.restaurant.dto.EmployeeInfo;
 import com.example.restaurant.dto.EmployeeUpdateCommand;
+import com.example.restaurant.model.EmployeeType;
 import com.example.restaurant.service.EmployeeService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +32,11 @@ public class EmployeeController {
     public ResponseEntity<EmployeeInfo> getById(@PathVariable Long id) {
         EmployeeInfo employeeInfo = employeeService.getEmployeeById(id);
         return new ResponseEntity<>(employeeInfo, HttpStatus.FOUND);
+    }
+    @GetMapping("/type")
+    public ResponseEntity<List<EmployeeInfo>> getByType(@RequestParam(value = "type") EmployeeType type) {
+        List<EmployeeInfo> employeeInfoList = employeeService.getByType(type);
+        return new ResponseEntity<>(employeeInfoList, HttpStatus.OK);
     }
     @GetMapping
     public ResponseEntity<List<EmployeeInfo>> findAll() {
