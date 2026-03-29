@@ -2,7 +2,7 @@ package com.example.restaurant.controller;
 
 import com.example.restaurant.dto.EmployeeCreateCommand;
 import com.example.restaurant.dto.EmployeeInfo;
-import com.example.restaurant.model.Employee;
+import com.example.restaurant.dto.EmployeeUpdateCommand;
 import com.example.restaurant.service.EmployeeService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,6 +36,11 @@ public class EmployeeController {
     public ResponseEntity<List<EmployeeInfo>> findAll() {
         List<EmployeeInfo> employeeInfoList = employeeService.findAll();
         return new ResponseEntity<>(employeeInfoList, HttpStatus.OK);
+    }
+    @PutMapping("/{id}")
+    public ResponseEntity<EmployeeInfo> update(@PathVariable Long id, @Valid @RequestBody EmployeeUpdateCommand command) {
+        EmployeeInfo employeeInfo = employeeService.updateEmployee(id, command);
+        return new ResponseEntity<>(employeeInfo, HttpStatus.OK);
     }
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteByID(@PathVariable Long id) {

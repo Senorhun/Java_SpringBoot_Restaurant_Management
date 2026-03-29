@@ -2,6 +2,7 @@ package com.example.restaurant.service;
 
 import com.example.restaurant.dto.EmployeeCreateCommand;
 import com.example.restaurant.dto.EmployeeInfo;
+import com.example.restaurant.dto.EmployeeUpdateCommand;
 import com.example.restaurant.exceptionhandling.EmployeeNotFoundException;
 import com.example.restaurant.model.Employee;
 import com.example.restaurant.model.Restaurant;
@@ -54,5 +55,14 @@ public class EmployeeService {
     public void delete(Long id) {
         Employee employeeToDelete = findEmployeeById(id);
         employeeRepository.delete(employeeToDelete);
+    }
+    public EmployeeInfo updateEmployee(Long id, EmployeeUpdateCommand command) {
+        Employee employeeToUpdate = findEmployeeById(id);
+        modelMapper.map(command, employeeToUpdate);
+        employeeRepository.save(employeeToUpdate);
+        EmployeeInfo employeeInfo = modelMapper.map(employeeToUpdate, EmployeeInfo.class);
+        Restaurant restaurant = restaurantService.findById(command.getRestaurantId());
+        employeeInfo.setRestaurantName(restaurant.getName());
+        return employeeInfo;
     }
 }
