@@ -9,4 +9,5 @@ public class MenuItemInfo {
     private double price;
     private MenuItemType menuItemType;
     private String description;
+    private boolean available;
 }

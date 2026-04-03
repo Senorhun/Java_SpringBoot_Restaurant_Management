@@ -61,4 +61,10 @@ public class MenuService {
         MenuItem menuItemToDelete = findById(id);
         menuRepository.delete(menuItemToDelete);
     }
+
+    public List<MenuItemInfo> findAllAvailable() {
+        List<MenuItem> menuItems = menuRepository.findAll();
+        return menuItems.stream().filter(MenuItem::isAvailable)
+                .map(m -> modelMapper.map(m,MenuItemInfo.class)).toList();
+    }
 }
