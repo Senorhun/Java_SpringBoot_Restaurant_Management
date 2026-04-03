@@ -2,6 +2,7 @@ package com.example.restaurant.service;
 
 import com.example.restaurant.dto.MenuItemCreateCommand;
 import com.example.restaurant.dto.MenuItemInfo;
+import com.example.restaurant.dto.MenuItemUpdateCommand;
 import com.example.restaurant.model.MenuItem;
 import com.example.restaurant.repository.MenuRepository;
 import jakarta.transaction.Transactional;
@@ -41,5 +42,12 @@ public class MenuService {
     public MenuItemInfo getMenuItemById(Long id) {
         MenuItem menuItem = findById(id);
         return modelMapper.map(menuItem,MenuItemInfo.class);
+    }
+
+    public MenuItemInfo updateMenuItem(Long id, @Valid MenuItemUpdateCommand command) {
+        MenuItem menuItemToUpdate = findById(id);
+        modelMapper.map(command, menuItemToUpdate);
+        menuRepository.save(menuItemToUpdate);
+        return modelMapper.map(menuItemToUpdate, MenuItemInfo.class);
     }
 }

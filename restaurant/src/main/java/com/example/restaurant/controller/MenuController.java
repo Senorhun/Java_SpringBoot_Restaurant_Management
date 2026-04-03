@@ -2,6 +2,7 @@ package com.example.restaurant.controller;
 
 import com.example.restaurant.dto.MenuItemCreateCommand;
 import com.example.restaurant.dto.MenuItemInfo;
+import com.example.restaurant.dto.MenuItemUpdateCommand;
 import com.example.restaurant.service.MenuService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,5 +37,11 @@ public class MenuController {
         MenuItemInfo menuItemInfo = menuService.getMenuItemById(id);
         return new ResponseEntity<>(menuItemInfo, HttpStatus.OK);
     }
+    @PutMapping("/{id}")
+    public ResponseEntity<MenuItemInfo> update(@PathVariable Long id, @Valid @RequestBody MenuItemUpdateCommand command) {
+        MenuItemInfo menuItemInfo = menuService.updateMenuItem(id, command);
+        return new ResponseEntity<>(menuItemInfo, HttpStatus.OK);
+    }
+
 
 }
