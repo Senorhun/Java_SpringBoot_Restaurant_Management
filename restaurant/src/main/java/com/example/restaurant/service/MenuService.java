@@ -51,4 +51,9 @@ public class MenuService {
         menuRepository.save(menuItemToUpdate);
         return modelMapper.map(menuItemToUpdate, MenuItemInfo.class);
     }
+
+    public void deleteById(Long id) {
+        MenuItem menuItemToDelete = findById(id);
+        menuRepository.delete(menuItemToDelete);
+    }
 }
