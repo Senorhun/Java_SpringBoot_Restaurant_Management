@@ -13,5 +13,7 @@ public class MenuItemCreateCommand {
     private double price;
     @NotNull
     private MenuItemType menuItemType;
+    @NotNull
+    private boolean available;
     private String description;
 }

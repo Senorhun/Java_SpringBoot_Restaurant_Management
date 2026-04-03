@@ -37,7 +37,11 @@ public class MenuController {
     public ResponseEntity<List<MenuItemInfo>> findByType(@RequestParam(value = "type") MenuItemType type) {
         List<MenuItemInfo> menuItemInfos = menuService.getByType(type);
         return new ResponseEntity<>(menuItemInfos, HttpStatus.OK);
-
+    }
+    @GetMapping("/available")
+    public ResponseEntity<List<MenuItemInfo>> findAllAvailable() {
+        List<MenuItemInfo> menuItemInfos = menuService.findAllAvailable();
+        return new ResponseEntity<>(menuItemInfos, HttpStatus.OK);
     }
     @GetMapping("/{id}")
     public ResponseEntity<MenuItemInfo> findById(@PathVariable Long id) {
