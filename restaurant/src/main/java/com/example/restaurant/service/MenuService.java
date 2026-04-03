@@ -3,6 +3,7 @@ package com.example.restaurant.service;
 import com.example.restaurant.dto.MenuItemCreateCommand;
 import com.example.restaurant.dto.MenuItemInfo;
 import com.example.restaurant.dto.MenuItemUpdateCommand;
+import com.example.restaurant.exceptionhandling.MenuItemNotFoundException;
 import com.example.restaurant.model.MenuItem;
 import com.example.restaurant.repository.MenuRepository;
 import jakarta.transaction.Transactional;
@@ -37,7 +38,7 @@ public class MenuService {
     }
 
     public MenuItem findById(Long id){
-        return menuRepository.findById(id).get();
+        return menuRepository.findById(id).orElseThrow(() -> new MenuItemNotFoundException(id));
     }
     public MenuItemInfo getMenuItemById(Long id) {
         MenuItem menuItem = findById(id);

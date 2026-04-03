@@ -38,5 +38,12 @@ public class GlobalExceptionHandler {
         log.error("Error in validation: " + validationError.getField() + ": " + validationError.getErrorMessage());
         return new ResponseEntity<>(List.of(validationError), HttpStatus.BAD_REQUEST);
     }
+    @ExceptionHandler(MenuItemNotFoundException.class)
+    public ResponseEntity<List<ValidationError>> handleMenuItemNotFoundException(MenuItemNotFoundException exception) {
+        ValidationError validationError = new ValidationError("menuItem_id",
+                "MenuItem not found with id: " + exception.getMenuItemId());
+        log.error("Error in validation: " + validationError.getField() + ": " + validationError.getErrorMessage());
+        return new ResponseEntity<>(List.of(validationError), HttpStatus.BAD_REQUEST);
+    }
 
 }
