@@ -2,6 +2,7 @@ package com.example.restaurant.service;
 
 import com.example.restaurant.dto.MenuItemCreateCommand;
 import com.example.restaurant.dto.MenuItemInfo;
+import com.example.restaurant.dto.MenuItemUpdateAvailabilityCommand;
 import com.example.restaurant.dto.MenuItemUpdateCommand;
 import com.example.restaurant.exceptionhandling.MenuItemNotFoundException;
 import com.example.restaurant.model.MenuItem;
@@ -66,5 +67,11 @@ public class MenuService {
         List<MenuItem> menuItems = menuRepository.findAll();
         return menuItems.stream().filter(MenuItem::isAvailable)
                 .map(m -> modelMapper.map(m,MenuItemInfo.class)).toList();
+    }
+
+    public MenuItemInfo updateAvailability(Long id, MenuItemUpdateAvailabilityCommand command) {
+        MenuItem menuItemToUpdate = findById(id);
+        menuItemToUpdate.setAvailable(command.isAvailable());
+        return modelMapper.map(menuItemToUpdate, MenuItemInfo.class);
     }
 }

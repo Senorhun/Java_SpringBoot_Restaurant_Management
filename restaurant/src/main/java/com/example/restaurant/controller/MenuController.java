@@ -2,6 +2,7 @@ package com.example.restaurant.controller;
 
 import com.example.restaurant.dto.MenuItemCreateCommand;
 import com.example.restaurant.dto.MenuItemInfo;
+import com.example.restaurant.dto.MenuItemUpdateAvailabilityCommand;
 import com.example.restaurant.dto.MenuItemUpdateCommand;
 import com.example.restaurant.model.MenuItemType;
 import com.example.restaurant.service.MenuService;
@@ -42,6 +43,11 @@ public class MenuController {
     public ResponseEntity<List<MenuItemInfo>> findAllAvailable() {
         List<MenuItemInfo> menuItemInfos = menuService.findAllAvailable();
         return new ResponseEntity<>(menuItemInfos, HttpStatus.OK);
+    }
+    @PatchMapping("/{id}/available")
+    public ResponseEntity<MenuItemInfo> updateAvailable(@PathVariable("id") Long id, @RequestBody MenuItemUpdateAvailabilityCommand command) {
+        MenuItemInfo menuItemInfo = menuService.updateAvailability(id, command);
+        return new ResponseEntity<>(menuItemInfo, HttpStatus.OK);
     }
     @GetMapping("/{id}")
     public ResponseEntity<MenuItemInfo> findById(@PathVariable Long id) {
