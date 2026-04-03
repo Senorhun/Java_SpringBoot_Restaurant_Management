@@ -3,6 +3,7 @@ package com.example.restaurant.controller;
 import com.example.restaurant.dto.MenuItemCreateCommand;
 import com.example.restaurant.dto.MenuItemInfo;
 import com.example.restaurant.dto.MenuItemUpdateCommand;
+import com.example.restaurant.model.MenuItemType;
 import com.example.restaurant.service.MenuService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +32,12 @@ public class MenuController {
     public ResponseEntity<List<MenuItemInfo>> findAll() {
         List<MenuItemInfo> menuItemInfos = menuService.findAll();
         return new ResponseEntity<>(menuItemInfos, HttpStatus.OK);
+    }
+    @GetMapping("/type")
+    public ResponseEntity<List<MenuItemInfo>> findByType(@RequestParam(value = "type") MenuItemType type) {
+        List<MenuItemInfo> menuItemInfos = menuService.getByType(type);
+        return new ResponseEntity<>(menuItemInfos, HttpStatus.OK);
+
     }
     @GetMapping("/{id}")
     public ResponseEntity<MenuItemInfo> findById(@PathVariable Long id) {

@@ -6,7 +6,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -44,6 +46,22 @@ public class GlobalExceptionHandler {
                 "MenuItem not found with id: " + exception.getMenuItemId());
         log.error("Error in validation: " + validationError.getField() + ": " + validationError.getErrorMessage());
         return new ResponseEntity<>(List.of(validationError), HttpStatus.BAD_REQUEST);
+    }
+    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
+    public ResponseEntity<List<ValidationError>> handleTypeMismatch(MethodArgumentTypeMismatchException exception) {
+        if (exception.getRequiredType() != null && exception.getRequiredType().isEnum()) {
+            String allowedValues = Arrays.toString(exception.getRequiredType().getEnumConstants());
+            ValidationError error = new ValidationError(exception.getName(),
+                    "Invalid value: " + exception.getValue() + ". Allowed values: " + allowedValues
+            );
+            log.warn("Invalid enum value '{}' for parameter '{}'", exception.getValue(), exception.getName());
+            return new ResponseEntity<>(List.of(error), HttpStatus.BAD_REQUEST);
+        }
+
+        return new ResponseEntity<>(
+                List.of(new ValidationError("request", "Invalid parameter")),
+                HttpStatus.BAD_REQUEST
+        );
     }
 
 }

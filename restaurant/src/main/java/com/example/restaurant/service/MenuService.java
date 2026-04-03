@@ -5,6 +5,7 @@ import com.example.restaurant.dto.MenuItemInfo;
 import com.example.restaurant.dto.MenuItemUpdateCommand;
 import com.example.restaurant.exceptionhandling.MenuItemNotFoundException;
 import com.example.restaurant.model.MenuItem;
+import com.example.restaurant.model.MenuItemType;
 import com.example.restaurant.repository.MenuRepository;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
@@ -43,6 +44,10 @@ public class MenuService {
     public MenuItemInfo getMenuItemById(Long id) {
         MenuItem menuItem = findById(id);
         return modelMapper.map(menuItem,MenuItemInfo.class);
+    }
+    public List<MenuItemInfo> getByType(MenuItemType type) {
+        List<MenuItem> menuItems = menuRepository.getByType(type);
+        return menuItems.stream().map(m -> modelMapper.map(m,MenuItemInfo.class)).toList();
     }
 
     public MenuItemInfo updateMenuItem(Long id, @Valid MenuItemUpdateCommand command) {
