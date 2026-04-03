@@ -7,10 +7,9 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/menu")
@@ -26,6 +25,11 @@ public class MenuController {
     public ResponseEntity<MenuItemInfo> save(@Valid @RequestBody MenuItemCreateCommand command) {
         MenuItemInfo menuItemInfo = menuService.save(command);
         return new ResponseEntity<>(menuItemInfo, HttpStatus.CREATED);
+    }
+    @GetMapping
+    public ResponseEntity<List<MenuItemInfo>> findAll() {
+        List<MenuItemInfo> menuItemInfos = menuService.findAll();
+        return new ResponseEntity<>(menuItemInfos, HttpStatus.OK);
     }
 
 }
