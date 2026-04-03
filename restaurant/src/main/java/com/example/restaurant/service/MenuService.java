@@ -34,4 +34,12 @@ public class MenuService {
         List<MenuItem> menuItems = menuRepository.findAll();
         return menuItems.stream().map(menuItem-> modelMapper.map(menuItem,MenuItemInfo.class)).toList();
     }
+
+    public MenuItem findById(Long id){
+        return menuRepository.findById(id).get();
+    }
+    public MenuItemInfo getMenuItemById(Long id) {
+        MenuItem menuItem = findById(id);
+        return modelMapper.map(menuItem,MenuItemInfo.class);
+    }
 }

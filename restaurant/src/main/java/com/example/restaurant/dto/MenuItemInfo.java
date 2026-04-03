@@ -8,4 +8,5 @@ public class MenuItemInfo {
     private String name;
     private double price;
     private MenuItemType menuItemType;
+    private String description;
 }

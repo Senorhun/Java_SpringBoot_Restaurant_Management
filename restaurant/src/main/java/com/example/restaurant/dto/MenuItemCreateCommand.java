@@ -13,4 +13,5 @@ public class MenuItemCreateCommand {
     private double price;
     @NotNull
     private MenuItemType menuItemType;
+    private String description;
 }

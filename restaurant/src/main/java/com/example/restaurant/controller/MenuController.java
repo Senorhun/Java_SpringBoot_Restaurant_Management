@@ -31,5 +31,10 @@ public class MenuController {
         List<MenuItemInfo> menuItemInfos = menuService.findAll();
         return new ResponseEntity<>(menuItemInfos, HttpStatus.OK);
     }
+    @GetMapping("/{id}")
+    public ResponseEntity<MenuItemInfo> findById(@PathVariable Long id) {
+        MenuItemInfo menuItemInfo = menuService.getMenuItemById(id);
+        return new ResponseEntity<>(menuItemInfo, HttpStatus.OK);
+    }
 
 }
