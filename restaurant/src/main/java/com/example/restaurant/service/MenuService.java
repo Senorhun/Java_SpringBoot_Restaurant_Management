@@ -9,6 +9,8 @@ import jakarta.validation.Valid;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @Transactional
 public class MenuService {
@@ -26,5 +28,10 @@ public class MenuService {
         MenuItem menuItemToSave = modelMapper.map(command, MenuItem.class);
         menuRepository.save(menuItemToSave);
         return modelMapper.map(menuItemToSave, MenuItemInfo.class);
+    }
+
+    public List<MenuItemInfo> findAll() {
+        List<MenuItem> menuItems = menuRepository.findAll();
+        return menuItems.stream().map(menuItem-> modelMapper.map(menuItem,MenuItemInfo.class)).toList();
     }
 }
