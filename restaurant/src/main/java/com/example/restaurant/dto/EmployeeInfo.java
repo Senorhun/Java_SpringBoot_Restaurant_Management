@@ -6,6 +6,7 @@ import lombok.Data;
 @Data
 public class EmployeeInfo {
     private String name;
+    private String nickname;
     private String email;
     private EmployeeType employeeType;
     private String restaurantName;
