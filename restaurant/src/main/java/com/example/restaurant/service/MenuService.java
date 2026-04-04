@@ -4,6 +4,7 @@ import com.example.restaurant.dto.MenuItemCreateCommand;
 import com.example.restaurant.dto.MenuItemInfo;
 import com.example.restaurant.dto.MenuItemUpdateAvailabilityCommand;
 import com.example.restaurant.dto.MenuItemUpdateCommand;
+import com.example.restaurant.exceptionhandling.MenuItemNameDuplicationException;
 import com.example.restaurant.exceptionhandling.MenuItemNotFoundException;
 import com.example.restaurant.model.MenuItem;
 import com.example.restaurant.model.MenuItemType;
@@ -29,6 +30,9 @@ public class MenuService {
     }
 
     public MenuItemInfo save(@Valid MenuItemCreateCommand command) {
+        if (menuRepository.existsByNameIgnoreCase(command.getName())) {
+            throw new MenuItemNameDuplicationException(command.getName());
+        }
         MenuItem menuItemToSave = modelMapper.map(command, MenuItem.class);
         menuRepository.save(menuItemToSave);
         return modelMapper.map(menuItemToSave, MenuItemInfo.class);
