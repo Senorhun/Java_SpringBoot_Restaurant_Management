@@ -8,6 +8,7 @@ import com.example.restaurant.exceptionhandling.MenuItemNameDuplicationException
 import com.example.restaurant.exceptionhandling.MenuItemNotFoundException;
 import com.example.restaurant.model.MenuItem;
 import com.example.restaurant.model.MenuItemType;
+import com.example.restaurant.model.Restaurant;
 import com.example.restaurant.repository.MenuRepository;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
@@ -22,11 +23,12 @@ public class MenuService {
 
     private final MenuRepository menuRepository;
     private final ModelMapper modelMapper;
+    private final RestaurantService restaurantService;
 
-    public MenuService(MenuRepository menuRepository, ModelMapper modelMapper) {
+    public MenuService(MenuRepository menuRepository, RestaurantService restaurantService, ModelMapper modelMapper) {
         this.menuRepository = menuRepository;
         this.modelMapper = modelMapper;
-
+        this.restaurantService = restaurantService;
     }
 
     public MenuItemInfo save(@Valid MenuItemCreateCommand command) {
@@ -34,13 +36,21 @@ public class MenuService {
             throw new MenuItemNameDuplicationException(command.getName());
         }
         MenuItem menuItemToSave = modelMapper.map(command, MenuItem.class);
+        Restaurant restaurant = restaurantService.findById(command.getRestaurantId());
+        menuItemToSave.setRestaurant(restaurant);
         menuRepository.save(menuItemToSave);
-        return modelMapper.map(menuItemToSave, MenuItemInfo.class);
+        MenuItemInfo menuItemInfo = modelMapper.map(command, MenuItemInfo.class);
+        menuItemInfo.setRestaurantName(restaurant.getName());
+        return menuItemInfo;
     }
 
     public List<MenuItemInfo> findAll() {
         List<MenuItem> menuItems = menuRepository.findAll();
-        return menuItems.stream().map(menuItem-> modelMapper.map(menuItem,MenuItemInfo.class)).toList();
+        return menuItems.stream().map(menuItem-> {
+            MenuItemInfo menuItemInfo = modelMapper.map(menuItem,MenuItemInfo.class);
+            menuItemInfo.setRestaurantName(menuItem.getRestaurant().getName());
+            return menuItemInfo;
+        }).toList();
     }
 
     public MenuItem findById(Long id){
@@ -48,18 +58,27 @@ public class MenuService {
     }
     public MenuItemInfo getMenuItemById(Long id) {
         MenuItem menuItem = findById(id);
-        return modelMapper.map(menuItem,MenuItemInfo.class);
+        MenuItemInfo menuItemInfo = modelMapper.map(menuItem, MenuItemInfo.class);
+        menuItemInfo.setRestaurantName(menuItem.getRestaurant().getName());
+        return menuItemInfo;
     }
     public List<MenuItemInfo> getByType(MenuItemType type) {
         List<MenuItem> menuItems = menuRepository.getByType(type);
-        return menuItems.stream().map(m -> modelMapper.map(m,MenuItemInfo.class)).toList();
+        return menuItems.stream().map(menuItem -> {
+            MenuItemInfo menuItemInfo = modelMapper.map(menuItem,MenuItemInfo.class);
+            menuItemInfo.setRestaurantName(menuItem.getRestaurant().getName());
+            return menuItemInfo;
+        }).toList();
     }
 
     public MenuItemInfo updateMenuItem(Long id, @Valid MenuItemUpdateCommand command) {
         MenuItem menuItemToUpdate = findById(id);
         modelMapper.map(command, menuItemToUpdate);
+        Restaurant restaurant = restaurantService.findById(command.getRestaurantId());
+        MenuItemInfo menuItemInfo = modelMapper.map(menuItemToUpdate, MenuItemInfo.class);
+        menuItemInfo.setRestaurantName(restaurant.getName());
         menuRepository.save(menuItemToUpdate);
-        return modelMapper.map(menuItemToUpdate, MenuItemInfo.class);
+        return menuItemInfo;
     }
 
     public void deleteById(Long id) {
@@ -70,7 +89,11 @@ public class MenuService {
     public List<MenuItemInfo> findAllAvailable() {
         List<MenuItem> menuItems = menuRepository.findAll();
         return menuItems.stream().filter(MenuItem::isAvailable)
-                .map(m -> modelMapper.map(m,MenuItemInfo.class)).toList();
+                .map(menuItem -> {
+                    MenuItemInfo menuItemInfo = modelMapper.map(menuItem,MenuItemInfo.class);
+                    menuItemInfo.setRestaurantName(menuItem.getRestaurant().getName());
+                    return menuItemInfo;
+                }).toList();
     }
 
     public MenuItemInfo updateAvailability(Long id, MenuItemUpdateAvailabilityCommand command) {

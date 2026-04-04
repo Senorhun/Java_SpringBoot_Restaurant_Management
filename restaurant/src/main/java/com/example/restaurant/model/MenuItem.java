@@ -16,4 +16,8 @@ public class MenuItem {
     private MenuItemType menuItemType;
     private String description;
     private boolean available;
+
+    @ManyToOne
+    @JoinColumn(name = "restaurant_id")
+    private Restaurant restaurant;
 }
