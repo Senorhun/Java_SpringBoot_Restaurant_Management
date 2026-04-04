@@ -3,6 +3,7 @@ package com.example.restaurant.service;
 import com.example.restaurant.dto.EmployeeInfo;
 import com.example.restaurant.dto.RestaurantCreateCommand;
 import com.example.restaurant.dto.RestaurantInfo;
+import com.example.restaurant.exceptionhandling.RestaurantNameDuplicationException;
 import com.example.restaurant.exceptionhandling.RestaurantNotFoundException;
 import com.example.restaurant.model.Restaurant;
 import com.example.restaurant.repository.EmployeeRepository;
@@ -29,6 +30,9 @@ public class RestaurantService {
     }
 
     public RestaurantInfo save(@Valid RestaurantCreateCommand command) {
+        if (restaurantRepository.existsByNameIgnoreCase(command.getName())) {
+            throw new RestaurantNameDuplicationException(command.getName());
+        }
         Restaurant restaurantToSave = modelMapper.map(command, Restaurant.class);
         Restaurant savedRestaurant = restaurantRepository.save(restaurantToSave);
         return modelMapper.map(savedRestaurant, RestaurantInfo.class);
