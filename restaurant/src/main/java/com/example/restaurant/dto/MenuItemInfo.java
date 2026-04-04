@@ -9,5 +9,6 @@ public class MenuItemInfo {
     private double price;
     private MenuItemType menuItemType;
     private String description;
+    private String restaurantName;
     private boolean available;
 }

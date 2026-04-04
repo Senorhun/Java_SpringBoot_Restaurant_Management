@@ -15,5 +15,8 @@ public class MenuItemUpdateCommand {
     private MenuItemType menuItemType;
     @NotNull
     private boolean available;
+    @NotNull
+    private Long restaurantId;
+
     private String description;
 }
