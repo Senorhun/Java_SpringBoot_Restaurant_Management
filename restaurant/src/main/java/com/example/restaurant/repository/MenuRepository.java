@@ -14,4 +14,5 @@ public interface MenuRepository extends JpaRepository<MenuItem,Long> {
     @Query("select m from MenuItem m where m.menuItemType=:type")
     List<MenuItem> getByType(@Param("type") MenuItemType type);
 
+    boolean existsByNameIgnoreCase(String name);
 }

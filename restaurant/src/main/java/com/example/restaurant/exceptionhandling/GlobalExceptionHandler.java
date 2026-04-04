@@ -62,6 +62,13 @@ public class GlobalExceptionHandler {
         log.error("Error in validation: " + validationError.getField() + ": " + validationError.getErrorMessage());
         return new ResponseEntity<>(List.of(validationError), HttpStatus.BAD_REQUEST);
     }
+    @ExceptionHandler(MenuItemNameDuplicationException.class)
+    public ResponseEntity<List<ValidationError>> MenuItemNameDuplicationException(MenuItemNameDuplicationException exception) {
+        ValidationError validationError = new ValidationError("name",
+                "Name already exists: " + exception.getName());
+        log.error("Error in validation: " + validationError.getField() + ": " + validationError.getErrorMessage());
+        return new ResponseEntity<>(List.of(validationError), HttpStatus.BAD_REQUEST);
+    }
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
     public ResponseEntity<List<ValidationError>> handleTypeMismatch(MethodArgumentTypeMismatchException exception) {
         if (exception.getRequiredType() != null && exception.getRequiredType().isEnum()) {
@@ -86,6 +93,8 @@ public class GlobalExceptionHandler {
             field = "nickname";
         } else if (message.contains("EMAIL")) {
             field = "email";
+        } else if (message.contains("NAME")) {
+            field = "name";
         }
         ValidationError error = new ValidationError(field, field + " already exists");
         log.warn("Duplicate {} error: {}", field, exception.getMessage());
