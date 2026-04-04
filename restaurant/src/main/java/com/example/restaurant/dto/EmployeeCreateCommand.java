@@ -11,6 +11,8 @@ public class EmployeeCreateCommand {
     @NotBlank
     private String name;
     @NotBlank
+    private String nickname;
+    @NotBlank
     @Email
     private String email;
     @NotNull

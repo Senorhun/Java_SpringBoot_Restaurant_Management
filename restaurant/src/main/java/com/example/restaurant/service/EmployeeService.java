@@ -3,6 +3,8 @@ package com.example.restaurant.service;
 import com.example.restaurant.dto.EmployeeCreateCommand;
 import com.example.restaurant.dto.EmployeeInfo;
 import com.example.restaurant.dto.EmployeeUpdateCommand;
+import com.example.restaurant.exceptionhandling.EmployeeEmailDuplicateException;
+import com.example.restaurant.exceptionhandling.EmployeeNicknameDuplicateException;
 import com.example.restaurant.exceptionhandling.EmployeeNotFoundException;
 import com.example.restaurant.model.Employee;
 import com.example.restaurant.model.EmployeeType;
@@ -12,10 +14,7 @@ import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
-
-import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -39,6 +38,12 @@ public class EmployeeService {
         return employeeInfo;
     }
     public EmployeeInfo save(@Valid EmployeeCreateCommand command) {
+        if (employeeRepository.existsByNicknameIgnoreCase(command.getNickname())) {
+            throw new EmployeeNicknameDuplicateException(command.getNickname());
+        }
+        if (employeeRepository.existsByEmailIgnoreCase(command.getEmail())){
+            throw new EmployeeEmailDuplicateException(command.getEmail());
+        }
         Employee employeeToSave = modelMapper.map(command, Employee.class);
         Restaurant restaurant = restaurantService.findById(command.getRestaurantId());
         employeeToSave.setRestaurant(restaurant);

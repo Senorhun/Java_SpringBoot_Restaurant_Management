@@ -1,6 +1,7 @@
 package com.example.restaurant.exceptionhandling;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -47,6 +48,20 @@ public class GlobalExceptionHandler {
         log.error("Error in validation: " + validationError.getField() + ": " + validationError.getErrorMessage());
         return new ResponseEntity<>(List.of(validationError), HttpStatus.BAD_REQUEST);
     }
+    @ExceptionHandler(EmployeeNicknameDuplicateException.class)
+    public ResponseEntity<List<ValidationError>> EmployeeNicknameDuplicateException(EmployeeNicknameDuplicateException exception) {
+        ValidationError validationError = new ValidationError("nickname",
+                "Nickname already exists: " + exception.getNickname());
+        log.error("Error in validation: " + validationError.getField() + ": " + validationError.getErrorMessage());
+        return new ResponseEntity<>(List.of(validationError), HttpStatus.BAD_REQUEST);
+    }
+    @ExceptionHandler(EmployeeEmailDuplicateException.class)
+    public ResponseEntity<List<ValidationError>> EmployeeEmailDuplicateException(EmployeeEmailDuplicateException exception) {
+        ValidationError validationError = new ValidationError("email",
+                "Email already exists: " + exception.getEmail());
+        log.error("Error in validation: " + validationError.getField() + ": " + validationError.getErrorMessage());
+        return new ResponseEntity<>(List.of(validationError), HttpStatus.BAD_REQUEST);
+    }
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
     public ResponseEntity<List<ValidationError>> handleTypeMismatch(MethodArgumentTypeMismatchException exception) {
         if (exception.getRequiredType() != null && exception.getRequiredType().isEnum()) {
@@ -62,6 +77,19 @@ public class GlobalExceptionHandler {
                 List.of(new ValidationError("request", "Invalid parameter")),
                 HttpStatus.BAD_REQUEST
         );
+    }
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public ResponseEntity<List<ValidationError>> handleDuplicate(DataIntegrityViolationException exception) {
+        String message = exception.getMessage();
+        String field = "unknown";
+        if (message.contains("NICKNAME")) {
+            field = "nickname";
+        } else if (message.contains("EMAIL")) {
+            field = "email";
+        }
+        ValidationError error = new ValidationError(field, field + " already exists");
+        log.warn("Duplicate {} error: {}", field, exception.getMessage());
+        return new ResponseEntity<>(List.of(error), HttpStatus.BAD_REQUEST);
     }
 
 }
