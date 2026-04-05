@@ -11,7 +11,7 @@ public class Table {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private int capacity;
-    private boolean occupied;
+    private TableStatus tableStatus;
 
     @Column(unique = true)
     private int number;

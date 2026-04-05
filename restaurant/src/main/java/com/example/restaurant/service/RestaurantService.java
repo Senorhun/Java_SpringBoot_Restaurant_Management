@@ -6,6 +6,7 @@ import com.example.restaurant.exceptionhandling.RestaurantNotFoundException;
 import com.example.restaurant.exceptionhandling.TableNumberDuplicationException;
 import com.example.restaurant.model.Restaurant;
 import com.example.restaurant.model.Table;
+import com.example.restaurant.model.TableStatus;
 import com.example.restaurant.repository.EmployeeRepository;
 import com.example.restaurant.repository.RestaurantRepository;
 import com.example.restaurant.repository.TableRepository;
@@ -73,7 +74,7 @@ public class RestaurantService {
         Table tableToSave = modelMapper.map(command, Table.class);
         int capacity = command.getCapacity() != null ? command.getCapacity() : 2;
         tableToSave.setCapacity(capacity);
-        tableToSave.setOccupied(false);
+        tableToSave.setTableStatus(TableStatus.FREE);
         tableRepository.save(tableToSave);
         TableInfo tableInfo = modelMapper.map(tableToSave, TableInfo.class);
         tableInfo.setRestaurantName(restaurant.getName());
