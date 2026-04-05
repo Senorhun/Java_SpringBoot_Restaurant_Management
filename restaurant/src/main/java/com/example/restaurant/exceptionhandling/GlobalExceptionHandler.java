@@ -76,6 +76,13 @@ public class GlobalExceptionHandler {
         log.error("Error in validation: " + validationError.getField() + ": " + validationError.getErrorMessage());
         return new ResponseEntity<>(List.of(validationError), HttpStatus.BAD_REQUEST);
     }
+    @ExceptionHandler(TableNumberDuplicationException.class)
+    public ResponseEntity<List<ValidationError>> TableNumberDuplicateException(TableNumberDuplicationException exception) {
+        ValidationError validationError = new ValidationError("email",
+                "Table number already exists: " + exception.getNumber());
+        log.error("Error in validation: " + validationError.getField() + ": " + validationError.getErrorMessage());
+        return new ResponseEntity<>(List.of(validationError), HttpStatus.BAD_REQUEST);
+    }
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
     public ResponseEntity<List<ValidationError>> handleTypeMismatch(MethodArgumentTypeMismatchException exception) {
         if (exception.getRequiredType() != null && exception.getRequiredType().isEnum()) {
@@ -102,6 +109,8 @@ public class GlobalExceptionHandler {
             field = "email";
         } else if (message.contains("NAME")) {
             field = "name";
+        } else if (message.contains("NUMBER")) {
+            field = "number";
         }
         ValidationError error = new ValidationError(field, field + " already exists");
         log.warn("Duplicate {} error: {}", field, exception.getMessage());

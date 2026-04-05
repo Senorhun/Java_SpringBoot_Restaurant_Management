@@ -1,9 +1,8 @@
 package com.example.restaurant.controller;
 
-import com.example.restaurant.dto.EmployeeInfo;
-import com.example.restaurant.dto.RestaurantCreateCommand;
-import com.example.restaurant.dto.RestaurantInfo;
+import com.example.restaurant.dto.*;
 import com.example.restaurant.model.Restaurant;
+import com.example.restaurant.model.Table;
 import com.example.restaurant.service.RestaurantService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -43,5 +42,10 @@ public class RestaurantController {
     @GetMapping("/{restaurantId}/employees")
     public List<EmployeeInfo> getEmployeesByRestaurant(@PathVariable Long restaurantId) {
         return restaurantService.getEmployeesByRestaurant(restaurantId);
+    }
+    @PostMapping("/table")
+    public ResponseEntity<TableInfo> installTable(@Valid @RequestBody TableCreateCommand command){
+        TableInfo tableInfo = restaurantService.installTable(command);
+        return new ResponseEntity<>(tableInfo, HttpStatus.CREATED);
     }
 }
