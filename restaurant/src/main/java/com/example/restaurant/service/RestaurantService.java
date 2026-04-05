@@ -1,13 +1,14 @@
 package com.example.restaurant.service;
 
-import com.example.restaurant.dto.EmployeeInfo;
-import com.example.restaurant.dto.RestaurantCreateCommand;
-import com.example.restaurant.dto.RestaurantInfo;
+import com.example.restaurant.dto.*;
 import com.example.restaurant.exceptionhandling.RestaurantNameDuplicationException;
 import com.example.restaurant.exceptionhandling.RestaurantNotFoundException;
+import com.example.restaurant.exceptionhandling.TableNumberDuplicationException;
 import com.example.restaurant.model.Restaurant;
+import com.example.restaurant.model.Table;
 import com.example.restaurant.repository.EmployeeRepository;
 import com.example.restaurant.repository.RestaurantRepository;
+import com.example.restaurant.repository.TableRepository;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import org.modelmapper.ModelMapper;
@@ -22,11 +23,13 @@ public class RestaurantService {
     private final RestaurantRepository restaurantRepository;
     private final EmployeeRepository employeeRepository;
     private final ModelMapper modelMapper;
+    private final TableRepository tableRepository;
 
-    public RestaurantService(RestaurantRepository restaurantRepository, ModelMapper modelMapper, EmployeeRepository employeeRepository) {
+    public RestaurantService(RestaurantRepository restaurantRepository, ModelMapper modelMapper, EmployeeRepository employeeRepository, TableRepository tableRepository) {
         this.restaurantRepository = restaurantRepository;
         this.modelMapper = modelMapper;
         this.employeeRepository = employeeRepository;
+        this.tableRepository = tableRepository;
     }
 
     public RestaurantInfo save(@Valid RestaurantCreateCommand command) {
@@ -60,5 +63,20 @@ public class RestaurantService {
                 .stream()
                 .map(employee -> modelMapper.map(employee, EmployeeInfo.class))
                 .toList();
+    }
+
+    public TableInfo installTable(@Valid TableCreateCommand command) {
+        if (tableRepository.existsByNumber(command.getNumber())){
+            throw new TableNumberDuplicationException(command.getNumber());
+        }
+        Restaurant restaurant = findById(command.getRestaurantId());
+        Table tableToSave = modelMapper.map(command, Table.class);
+        int capacity = command.getCapacity() != null ? command.getCapacity() : 2;
+        tableToSave.setCapacity(capacity);
+        tableToSave.setOccupied(false);
+        tableRepository.save(tableToSave);
+        TableInfo tableInfo = modelMapper.map(tableToSave, TableInfo.class);
+        tableInfo.setRestaurantName(restaurant.getName());
+        return tableInfo;
     }
 }
