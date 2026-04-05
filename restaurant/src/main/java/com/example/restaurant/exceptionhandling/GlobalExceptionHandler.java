@@ -78,8 +78,15 @@ public class GlobalExceptionHandler {
     }
     @ExceptionHandler(TableNumberDuplicationException.class)
     public ResponseEntity<List<ValidationError>> TableNumberDuplicateException(TableNumberDuplicationException exception) {
-        ValidationError validationError = new ValidationError("email",
+        ValidationError validationError = new ValidationError("table number",
                 "Table number already exists: " + exception.getNumber());
+        log.error("Error in validation: " + validationError.getField() + ": " + validationError.getErrorMessage());
+        return new ResponseEntity<>(List.of(validationError), HttpStatus.BAD_REQUEST);
+    }
+    @ExceptionHandler(TableNotFoundException.class)
+    public ResponseEntity<List<ValidationError>> TableNotFoundException(TableNotFoundException exception) {
+        ValidationError validationError = new ValidationError("table_id",
+                "Table already exists: " + exception.getTableId());
         log.error("Error in validation: " + validationError.getField() + ": " + validationError.getErrorMessage());
         return new ResponseEntity<>(List.of(validationError), HttpStatus.BAD_REQUEST);
     }
