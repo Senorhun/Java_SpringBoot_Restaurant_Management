@@ -3,6 +3,7 @@ package com.example.restaurant.service;
 import com.example.restaurant.dto.*;
 import com.example.restaurant.exceptionhandling.RestaurantNameDuplicationException;
 import com.example.restaurant.exceptionhandling.RestaurantNotFoundException;
+import com.example.restaurant.exceptionhandling.TableNotFoundException;
 import com.example.restaurant.exceptionhandling.TableNumberDuplicationException;
 import com.example.restaurant.model.Restaurant;
 import com.example.restaurant.model.Table;
@@ -75,9 +76,44 @@ public class RestaurantService {
         int capacity = command.getCapacity() != null ? command.getCapacity() : 2;
         tableToSave.setCapacity(capacity);
         tableToSave.setTableStatus(TableStatus.FREE);
+        tableToSave.setRestaurant(restaurant);
         tableRepository.save(tableToSave);
         TableInfo tableInfo = modelMapper.map(tableToSave, TableInfo.class);
         tableInfo.setRestaurantName(restaurant.getName());
+        return tableInfo;
+    }
+
+    public List<TableInfo> findAllTable() {
+        List<Table> tables = tableRepository.findAll();
+        return tables.stream()
+                .map(table -> {
+                    TableInfo tableInfo = modelMapper.map(table, TableInfo.class);
+                    tableInfo.setRestaurantName(table.getRestaurant().getName());
+                    return tableInfo;
+                }).toList();
+    }
+    public Table findTableById(long id){
+        return tableRepository.findById(id).orElseThrow(() -> new TableNotFoundException(id));
+    }
+
+    public TableInfo getTableById(Long id) {
+        Table table = findTableById(id);
+        TableInfo tableInfo = modelMapper.map(table, TableInfo.class);
+        tableInfo.setRestaurantName(table.getRestaurant().getName());
+        return tableInfo;
+    }
+
+    public void deleteTable(Long id) {
+        tableRepository.deleteById(id);
+    }
+
+    public TableInfo updateTable(Long id, @Valid TableUpdateCommand command) {
+        Table tableToSave = findTableById(id);
+        modelMapper.map(command, tableToSave);
+        tableToSave.setTableStatus(command.getTableStatus());
+        Table savedTable = tableRepository.save(tableToSave);
+        TableInfo tableInfo = modelMapper.map(savedTable, TableInfo.class);
+        tableInfo.setRestaurantName(savedTable.getRestaurant().getName());
         return tableInfo;
     }
 }
