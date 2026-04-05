@@ -69,4 +69,9 @@ public class RestaurantController {
         TableInfo tableInfo = restaurantService.updateTable(id, command);
         return new ResponseEntity<>(tableInfo,HttpStatus.OK);
     }
+    @PatchMapping("/table/{id}/occupancy")
+    public ResponseEntity<TableInfo> updateTableOccupancy(@PathVariable Long id, @Valid @RequestBody TableOccupancyUpdateCommand command){
+        TableInfo tableInfo = restaurantService.updateTableOccupancy(id, command);
+        return new ResponseEntity<>(tableInfo,HttpStatus.OK);
+    }
 }
