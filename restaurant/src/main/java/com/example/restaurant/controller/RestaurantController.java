@@ -74,4 +74,9 @@ public class RestaurantController {
         TableInfo tableInfo = restaurantService.updateTableOccupancy(id, command);
         return new ResponseEntity<>(tableInfo,HttpStatus.OK);
     }
+    @PatchMapping("/table/{id}/capacity")
+    public ResponseEntity<TableInfo> updateTableCapacity(@PathVariable Long id, @Valid @RequestBody TableUpdateCapacityCommand command){
+        TableInfo tableInfo = restaurantService.updateTableCapacity(id,command);
+        return new ResponseEntity<>(tableInfo,HttpStatus.OK);
+    }
 }

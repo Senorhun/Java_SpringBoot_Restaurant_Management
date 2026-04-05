@@ -125,4 +125,13 @@ public class RestaurantService {
         tableInfo.setRestaurantName(tableToSave.getRestaurant().getName());
         return tableInfo;
     }
+
+    public TableInfo updateTableCapacity(Long id, @Valid TableUpdateCapacityCommand command) {
+        Table tableToSave = findTableById(id);
+        tableToSave.setCapacity(command.getCapacity());
+        tableRepository.save(tableToSave);
+        TableInfo tableInfo = modelMapper.map(tableToSave, TableInfo.class);
+        tableInfo.setRestaurantName(tableToSave.getRestaurant().getName());
+        return tableInfo;
+    }
 }
