@@ -97,6 +97,13 @@ public class GlobalExceptionHandler {
         log.error("Error in validation: " + validationError.getField() + ": " + validationError.getErrorMessage());
         return new ResponseEntity<>(List.of(validationError), HttpStatus.BAD_REQUEST);
     }
+    @ExceptionHandler(OrderNotFoundException.class)
+    public ResponseEntity<List<ValidationError>> OrderItemNotFoundException(OrderNotFoundException exception) {
+        ValidationError validationError = new ValidationError("order_id",
+                "Order not found with id: " + exception.getId());
+        log.error("Error in validation: " + validationError.getField() + ": " + validationError.getErrorMessage());
+        return new ResponseEntity<>(List.of(validationError), HttpStatus.BAD_REQUEST);
+    }
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
     public ResponseEntity<List<ValidationError>> handleTypeMismatch(MethodArgumentTypeMismatchException exception) {
         if (exception.getRequiredType() != null && exception.getRequiredType().isEnum()) {

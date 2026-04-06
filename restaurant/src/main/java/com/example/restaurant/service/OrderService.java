@@ -2,6 +2,7 @@ package com.example.restaurant.service;
 
 import com.example.restaurant.dto.*;
 import com.example.restaurant.exceptionhandling.OrderItemNotFoundException;
+import com.example.restaurant.exceptionhandling.OrderNotFoundException;
 import com.example.restaurant.model.*;
 import com.example.restaurant.repository.OrderItemRepository;
 import com.example.restaurant.repository.OrderRepository;
@@ -9,6 +10,7 @@ import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.DeleteMapping;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -46,6 +48,9 @@ public class OrderService {
 
     public OrderItem findOrderItemById(Long id){
         return orderItemRepository.findById(id).orElseThrow(()->new OrderItemNotFoundException(id));
+    }
+    Orders findById(Long id){
+        return  orderRepository.findById(id).orElseThrow(()->new OrderNotFoundException(id));
     }
     public OrderItemInfo updateOrderItemQuantity(Long id, @Valid OrderItemQuantityUpdateCommand command) {
         OrderItem orderItemToUpdate = findOrderItemById(id);
@@ -95,4 +100,19 @@ public class OrderService {
         orderInfo.setItems(orderItemInfos);
         return orderInfo;
     }
+
+    public void delete(Long id) {
+        Orders orders = findById(id);
+        orderRepository.delete(orders);
+    }
+
+    public OrderUpdateStatusInfo updateOrderStatus(Long id, OrderStatusUpdateCommand command) {
+        Orders orders = findById(id);
+        orders.setStatus(command.getOrderStatus());
+        orderRepository.save(orders);
+        OrderUpdateStatusInfo orderUpdateStatusInfo = modelMapper.map(orders, OrderUpdateStatusInfo.class);
+        orderUpdateStatusInfo.setOrderStatus(command.getOrderStatus());
+        return orderUpdateStatusInfo;
+    }
+
 }

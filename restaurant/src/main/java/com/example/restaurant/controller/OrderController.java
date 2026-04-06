@@ -23,6 +23,16 @@ public class OrderController {
         OrderInfo orderInfo = orderService.saveOrder(command);
         return new ResponseEntity<>(orderInfo, HttpStatus.CREATED);
     }
+    @DeleteMapping(("/{id}"))
+    public ResponseEntity<Void> deleteOrder(@PathVariable("id") Long id){
+        orderService.delete(id);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+    @PatchMapping("/{id}/orderStatus")
+    public ResponseEntity<OrderUpdateStatusInfo> updateOrderStatus(@PathVariable("id") Long id, @Valid @RequestBody OrderStatusUpdateCommand command){
+        OrderUpdateStatusInfo orderUpdateStatusInfo = orderService.updateOrderStatus(id, command);
+        return new ResponseEntity<>(orderUpdateStatusInfo, HttpStatus.OK);
+    }
     @PostMapping("/orderItem")
     public ResponseEntity<OrderItemInfo> saveOrderItem(@Valid @RequestBody OrderItemCreateCommand command) {
         OrderItemInfo orderItemInfo = orderService.saveOrderItem(command);
