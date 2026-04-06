@@ -1,11 +1,8 @@
 package com.example.restaurant.controller;
 
 import com.example.restaurant.dto.*;
-import com.example.restaurant.model.Restaurant;
-import com.example.restaurant.model.Table;
 import com.example.restaurant.service.RestaurantService;
 import jakarta.validation.Valid;
-import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

@@ -23,5 +23,5 @@ public class Restaurant {
     private List<MenuItem> menuItemList;
 
     @OneToMany(mappedBy = "restaurant")
-    private List<Table> tableList;
+    private List<RestaurantTable> restaurantTableList;
 }

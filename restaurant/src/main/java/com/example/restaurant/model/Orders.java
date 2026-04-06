@@ -7,8 +7,7 @@ import java.util.List;
 
 @Data
 @Entity
-@jakarta.persistence.Table(name = "orders")
-public class Order {
+public class Orders {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -18,10 +17,10 @@ public class Order {
     private OrderStatus status;
 
     @ManyToOne
-    @JoinColumn(name = "table_id")
-    private Table table;
+    @JoinColumn(name = "restaurant_table_id")
+    private RestaurantTable restaurantTable;
 
-    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "orders", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<OrderItem> items;
 
 

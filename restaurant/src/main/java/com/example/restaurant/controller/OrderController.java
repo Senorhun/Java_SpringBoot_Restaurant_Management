@@ -1,9 +1,6 @@
 package com.example.restaurant.controller;
 
-import com.example.restaurant.dto.OrderItemCreateCommand;
-import com.example.restaurant.dto.OrderItemInfo;
-import com.example.restaurant.dto.OrderItemQuantityUpdateCommand;
-import com.example.restaurant.model.OrderItem;
+import com.example.restaurant.dto.*;
 import com.example.restaurant.service.OrderService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,9 +18,14 @@ public class OrderController {
         this.orderService = orderService;
     }
 
+    @PostMapping
+    public ResponseEntity<OrderInfo> saveOrder(@Valid @RequestBody OrderCreateCommand command){
+        OrderInfo orderInfo = orderService.saveOrder(command);
+        return new ResponseEntity<>(orderInfo, HttpStatus.CREATED);
+    }
     @PostMapping("/orderItem")
     public ResponseEntity<OrderItemInfo> saveOrderItem(@Valid @RequestBody OrderItemCreateCommand command) {
-        OrderItemInfo orderItemInfo = orderService.save(command);
+        OrderItemInfo orderItemInfo = orderService.saveOrderItem(command);
         return new ResponseEntity<>(orderItemInfo, HttpStatus.CREATED);
     }
     @PatchMapping("/orderItem/{id}/quantity")
