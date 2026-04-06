@@ -45,7 +45,7 @@ public class MenuController {
         return new ResponseEntity<>(menuItemInfos, HttpStatus.OK);
     }
     @PatchMapping("/{id}/available")
-    public ResponseEntity<MenuItemInfo> updateAvailable(@PathVariable("id") Long id, @RequestBody MenuItemUpdateAvailabilityCommand command) {
+    public ResponseEntity<MenuItemInfo> updateAvailable(@PathVariable("id") Long id, @Valid @RequestBody MenuItemUpdateAvailabilityCommand command) {
         MenuItemInfo menuItemInfo = menuService.updateAvailability(id, command);
         return new ResponseEntity<>(menuItemInfo, HttpStatus.OK);
     }
@@ -62,7 +62,7 @@ public class MenuController {
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         menuService.deleteById(id);
-        return new ResponseEntity<>(HttpStatus.OK);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
 

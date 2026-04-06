@@ -86,9 +86,9 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(TableNotFoundException.class)
     public ResponseEntity<List<ValidationError>> TableNotFoundException(TableNotFoundException exception) {
         ValidationError validationError = new ValidationError("table_id",
-                "Table already exists: " + exception.getTableId());
+                "Table not found with id: " + exception.getTableId());
         log.error("Error in validation: " + validationError.getField() + ": " + validationError.getErrorMessage());
-        return new ResponseEntity<>(List.of(validationError), HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(List.of(validationError), HttpStatus.NOT_FOUND);
     }
     @ExceptionHandler(OrderItemNotFoundException.class)
     public ResponseEntity<List<ValidationError>> OrderItemNotFoundException(OrderItemNotFoundException exception) {

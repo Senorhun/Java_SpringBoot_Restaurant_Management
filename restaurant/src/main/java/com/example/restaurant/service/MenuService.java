@@ -14,6 +14,7 @@ import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.List;
 
@@ -35,11 +36,11 @@ public class MenuService {
         if (menuRepository.existsByNameIgnoreCase(command.getName())) {
             throw new MenuItemNameDuplicationException(command.getName());
         }
-        MenuItem menuItemToSave = modelMapper.map(command, MenuItem.class);
         Restaurant restaurant = restaurantService.findById(command.getRestaurantId());
+        MenuItem menuItemToSave = modelMapper.map(command, MenuItem.class);
         menuItemToSave.setRestaurant(restaurant);
-        menuRepository.save(menuItemToSave);
-        MenuItemInfo menuItemInfo = modelMapper.map(command, MenuItemInfo.class);
+        MenuItem savedMenuItem = menuRepository.save(menuItemToSave);
+        MenuItemInfo menuItemInfo = modelMapper.map(savedMenuItem, MenuItemInfo.class);
         menuItemInfo.setRestaurantName(restaurant.getName());
         return menuItemInfo;
     }
@@ -96,9 +97,12 @@ public class MenuService {
                 }).toList();
     }
 
-    public MenuItemInfo updateAvailability(Long id, MenuItemUpdateAvailabilityCommand command) {
+    public MenuItemInfo updateAvailability(Long id, @Valid MenuItemUpdateAvailabilityCommand command) {
         MenuItem menuItemToUpdate = findById(id);
         menuItemToUpdate.setAvailable(command.isAvailable());
-        return modelMapper.map(menuItemToUpdate, MenuItemInfo.class);
+        MenuItem savedMenuItem = menuRepository.save(menuItemToUpdate);
+        MenuItemInfo menuItemInfo = modelMapper.map(savedMenuItem, MenuItemInfo.class);
+        menuItemInfo.setRestaurantName(savedMenuItem.getRestaurant().getName());
+        return menuItemInfo;
     }
 }

@@ -47,7 +47,7 @@ public class RestaurantService {
                 .map(restaurant -> modelMapper.map(restaurant, RestaurantInfo.class))
                 .collect(Collectors.toList());
     }
-    Restaurant findById(Long id) {
+    public Restaurant findById(Long id) {
         return restaurantRepository.findById(id).orElseThrow(() -> new RestaurantNotFoundException(id));
     }
     public RestaurantInfo getById(Long id) {
