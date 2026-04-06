@@ -15,7 +15,10 @@ public class MenuItem {
     @Column(unique = true)
     private String name;
     private BigDecimal price;
+
+    @Enumerated(EnumType.STRING)
     private MenuItemType menuItemType;
+
     private String description;
     private boolean available;
 
