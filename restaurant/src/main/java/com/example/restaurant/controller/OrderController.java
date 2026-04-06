@@ -43,5 +43,10 @@ public class OrderController {
         OrderItemInfo orderItemInfo = orderService.updateOrderItemQuantity(id, command);
         return new ResponseEntity<>(orderItemInfo, HttpStatus.OK);
     }
+    @GetMapping("/{id}/checkout")
+    public ResponseEntity<OrderCheckoutInfo> checkout(@PathVariable("id") Long orderId){
+        OrderCheckoutInfo orderCheckoutInfoInfo = orderService.checkout(orderId);
+        return new ResponseEntity<>(orderCheckoutInfoInfo, HttpStatus.OK);
+    }
 
 }

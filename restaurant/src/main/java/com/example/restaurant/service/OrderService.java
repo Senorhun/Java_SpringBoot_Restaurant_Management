@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.DeleteMapping;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -115,4 +116,28 @@ public class OrderService {
         return orderUpdateStatusInfo;
     }
 
+    public OrderCheckoutInfo checkout(Long orderId) {
+        Orders order = findById(orderId);
+        if (order.getStatus() == OrderStatus.PAID) {
+            throw new IllegalStateException("Order already paid");
+        }
+        order.setStatus(OrderStatus.PAID);
+        RestaurantTable table = order.getRestaurantTable();
+        table.setTableStatus(TableStatus.FREE);
+        order.setPaidAt(LocalDateTime.now());
+        Orders savedOrder = orderRepository.save(order);
+
+        OrderCheckoutInfo orderCheckoutInfo = modelMapper.map(savedOrder, OrderCheckoutInfo.class);
+        orderCheckoutInfo.setTableNumber(savedOrder.getRestaurantTable().getNumber());
+        orderCheckoutInfo.setRestaurantTableId(savedOrder.getRestaurantTable().getId());
+        List<OrderItemInfo> items = savedOrder.getItems().stream()
+                .map(item -> {
+                    OrderItemInfo info = modelMapper.map(item, OrderItemInfo.class);
+                    info.setOrderItemName(item.getMenuItem().getName());
+                    return info;
+                }).toList();
+
+        orderCheckoutInfo.setItems(items);
+        return orderCheckoutInfo;
+    }
 }
