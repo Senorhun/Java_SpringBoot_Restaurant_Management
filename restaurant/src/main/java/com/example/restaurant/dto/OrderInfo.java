@@ -9,9 +9,9 @@ import java.util.List;
 @Data
 public class OrderInfo {
     private Long id;
-    private Long tableId;              // az asztal azonosítója
-    private int tableNumber;           // az asztal száma
+    private Long restaurantTableId;
+    private int tableNumber;
     private BigDecimal totalPrice;
     private OrderStatus status;
-    private List<OrderItemInfo> items; // a rendelés tétel listája
+    private List<OrderItemInfo> items;
 }

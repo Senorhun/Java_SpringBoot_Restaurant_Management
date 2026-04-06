@@ -5,6 +5,7 @@ import lombok.Data;
 
 @Data
 public class TableInfo {
+    private Long id;
     private int number;
     private int capacity;
     private TableStatus tableStatus;

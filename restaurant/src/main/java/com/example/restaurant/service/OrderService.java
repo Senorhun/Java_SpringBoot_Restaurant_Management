@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -39,7 +40,7 @@ public class OrderService {
         orderItemToSave.setPrice(menuItem.getPrice());
         orderItemRepository.save(orderItemToSave);
         OrderItemInfo orderItemInfo = modelMapper.map(orderItemToSave, OrderItemInfo.class);
-        orderItemInfo.setName(menuItem.getName());
+        orderItemInfo.setOrderItemName(menuItem.getName());
         return orderItemInfo;
     }
 
@@ -51,7 +52,7 @@ public class OrderService {
         orderItemToUpdate.setQuantity(command.getQuantity());
         OrderItem savedOrderItem = orderItemRepository.save(orderItemToUpdate);
         OrderItemInfo orderItemInfo = modelMapper.map(orderItemToUpdate, OrderItemInfo.class);
-        orderItemInfo.setName(savedOrderItem.getMenuItem().getName());
+        orderItemInfo.setOrderItemName(savedOrderItem.getMenuItem().getName());
         return orderItemInfo;
     }
 
@@ -81,7 +82,17 @@ public class OrderService {
 
         orders.setItems(orderItems);
         orders.setTotalPrice(totalPrice);
-        orderRepository.save(orders);
-        return modelMapper.map(orders, OrderInfo.class);
+        Orders savedOrder = orderRepository.save(orders);
+        OrderInfo orderInfo = modelMapper.map(orders, OrderInfo.class);
+        orderInfo.setTableNumber(savedOrder.getRestaurantTable().getNumber());
+        orderInfo.setRestaurantTableId(savedOrder.getRestaurantTable().getId());
+        List<OrderItemInfo> orderItemInfos = savedOrder.getItems().stream()
+                .map(item -> {
+                    OrderItemInfo itemInfo = modelMapper.map(item, OrderItemInfo.class);
+                    itemInfo.setOrderItemName(item.getMenuItem().getName());
+                    return itemInfo;
+                }).toList();
+        orderInfo.setItems(orderItemInfos);
+        return orderInfo;
     }
 }
