@@ -1,0 +1,13 @@
+package com.example.restaurant.dto;
+
+import jakarta.validation.constraints.NotNull;
+import lombok.Data;
+
+@Data
+public class OrderItemCreateCommand {
+    @NotNull
+    private int quantity;
+    @NotNull
+    private int menuItemId;
+
+}

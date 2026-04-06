@@ -1,10 +1,10 @@
 package com.example.restaurant.repository;
 
-import com.example.restaurant.model.Table;
+import com.example.restaurant.model.OrderItem;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface TableRepository extends JpaRepository<Table, Long> {
-    boolean existsByNumber(int number);
+public interface OrderItemRepository extends JpaRepository<OrderItem, Long> {
+
 }
