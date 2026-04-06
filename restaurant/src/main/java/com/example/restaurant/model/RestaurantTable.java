@@ -8,7 +8,7 @@ import java.util.List;
 @Data
 @Entity
 @jakarta.persistence.Table(name = "restaurant_table")
-public class Table {
+public class RestaurantTable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -24,7 +24,7 @@ public class Table {
     @JoinColumn(name = "restaurant_id")
     private Restaurant restaurant;
 
-    @OneToMany(mappedBy = "table")
-    private List<Order> orders;
+    @OneToMany(mappedBy = "restaurantTable")
+    private List<Orders> orders;
 
 }

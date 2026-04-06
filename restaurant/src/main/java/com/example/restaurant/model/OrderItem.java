@@ -1,7 +1,6 @@
 package com.example.restaurant.model;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 import java.math.BigDecimal;
@@ -20,7 +19,7 @@ public class OrderItem {
     private MenuItem menuItem;
 
     @ManyToOne
-    @JoinColumn(name = "order_id")
-    private Order order;
+    @JoinColumn(name = "orders_id")
+    private Orders orders;
 
 }

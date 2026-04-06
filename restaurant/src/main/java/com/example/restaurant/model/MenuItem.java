@@ -3,6 +3,8 @@ package com.example.restaurant.model;
 import jakarta.persistence.*;
 import lombok.Data;
 
+import java.math.BigDecimal;
+
 @Data
 @Entity
 public class MenuItem {
@@ -12,7 +14,7 @@ public class MenuItem {
 
     @Column(unique = true)
     private String name;
-    private double price;
+    private BigDecimal price;
     private MenuItemType menuItemType;
     private String description;
     private boolean available;
