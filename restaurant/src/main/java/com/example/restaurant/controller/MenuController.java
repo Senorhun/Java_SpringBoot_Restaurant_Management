@@ -8,10 +8,10 @@ import com.example.restaurant.model.MenuItemType;
 import com.example.restaurant.service.MenuService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
 
 @RestController
@@ -33,6 +33,11 @@ public class MenuController {
     public ResponseEntity<List<MenuItemInfo>> findAll() {
         List<MenuItemInfo> menuItemInfos = menuService.findAll();
         return new ResponseEntity<>(menuItemInfos, HttpStatus.OK);
+    }
+    @GetMapping("/menuItems")
+    public ResponseEntity<Page<MenuItemInfo>> getAvailableMenuItems(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "5") int size) {
+        Page<MenuItemInfo> items = menuService.getAvailableMenuItems(page, size);
+        return new ResponseEntity<>(items, HttpStatus.OK);
     }
     @GetMapping("/type")
     public ResponseEntity<List<MenuItemInfo>> findByType(@RequestParam(value = "type") MenuItemType type) {

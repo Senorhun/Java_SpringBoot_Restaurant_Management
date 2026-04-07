@@ -13,9 +13,11 @@ import com.example.restaurant.repository.MenuRepository;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestBody;
-
+import org.springframework.data.domain.Pageable;
 import java.util.List;
 
 @Service
@@ -54,6 +56,16 @@ public class MenuService {
         }).toList();
     }
 
+    public Page<MenuItemInfo> getAvailableMenuItems(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by("name").ascending());
+        Page<MenuItem> menuItemsPage = menuRepository.findByAvailableTrue(pageable);
+
+        return menuItemsPage.map(menuItem -> {
+            MenuItemInfo info = modelMapper.map(menuItem, MenuItemInfo.class);
+            info.setRestaurantName(menuItem.getRestaurant().getName());
+            return info;
+        });
+    }
     public MenuItem findById(Long id){
         return menuRepository.findById(id).orElseThrow(() -> new MenuItemNotFoundException(id));
     }
