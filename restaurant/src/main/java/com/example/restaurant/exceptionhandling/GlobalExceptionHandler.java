@@ -111,6 +111,13 @@ public class GlobalExceptionHandler {
         log.error("Error in validation: " + validationError.getField() + ": " + validationError.getErrorMessage());
         return new ResponseEntity<>(List.of(validationError), HttpStatus.BAD_REQUEST);
     }
+    @ExceptionHandler(MenuItemNotAvailableException.class)
+    public ResponseEntity<List<ValidationError>> MenuItemNotAvailableException(MenuItemNotAvailableException exception) {
+        ValidationError validationError = new ValidationError("menu item",
+                "menu item is not availabile with id: " + exception.getMenuItemId());
+        log.error("Error in validation: " + validationError.getField() + ": " + validationError.getErrorMessage());
+        return new ResponseEntity<>(List.of(validationError), HttpStatus.BAD_REQUEST);
+    }
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
     public ResponseEntity<List<ValidationError>> handleTypeMismatch(MethodArgumentTypeMismatchException exception) {
         if (exception.getRequiredType() != null && exception.getRequiredType().isEnum()) {

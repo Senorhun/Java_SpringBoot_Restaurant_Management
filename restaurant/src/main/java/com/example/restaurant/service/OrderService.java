@@ -1,6 +1,7 @@
 package com.example.restaurant.service;
 
 import com.example.restaurant.dto.*;
+import com.example.restaurant.exceptionhandling.MenuItemNotAvailableException;
 import com.example.restaurant.exceptionhandling.OrderAlreadyPaidException;
 import com.example.restaurant.exceptionhandling.OrderItemNotFoundException;
 import com.example.restaurant.exceptionhandling.OrderNotFoundException;
@@ -16,7 +17,9 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -70,7 +73,7 @@ public class OrderService {
 
     public OrderInfo saveOrder(@Valid OrderCreateCommand command) {
         RestaurantTable restaurantTable = restaurantService.findTableById(command.getRestaurantTableId());
-
+        restaurantTable.setTableStatus(TableStatus.OCCUPIED);
         Orders orders = new Orders();
         orders.setRestaurantTable(restaurantTable);
         orders.setStatus(OrderStatus.NEW);
@@ -83,6 +86,7 @@ public class OrderService {
             BigDecimal price = menuItem.getPrice().multiply(BigDecimal.valueOf(itemCommand.getQuantity()));
 
             OrderItem orderItem = new OrderItem();
+            if (!menuItem.isAvailable()) throw new MenuItemNotAvailableException((long) itemCommand.getMenuItemId());
             orderItem.setMenuItem(menuItem);
             orderItem.setQuantity(itemCommand.getQuantity());
             orderItem.setPrice(price);
@@ -125,25 +129,49 @@ public class OrderService {
     }
 
     public OrderCheckoutInfo checkout(Long orderId) {
-        Orders order = findById(orderId);
-        validateNotPaid(order);
-        order.setStatus(OrderStatus.PAID);
-        RestaurantTable table = order.getRestaurantTable();
+        Orders baseOrder = findById(orderId);
+        validateNotPaid(baseOrder);
+        RestaurantTable table = baseOrder.getRestaurantTable();
+        List<Orders> orders = orderRepository.findByRestaurantTableAndStatus(table, OrderStatus.SERVED);
+        Map<Long, OrderItemInfo> mergedOrderItems = new HashMap<>();
+
+        for (Orders order : orders) {
+            order.setStatus(OrderStatus.PAID);
+            order.setPaidAt(LocalDateTime.now());
+
+            for (OrderItem item : order.getItems()) {
+                Long menuItemId = item.getMenuItem().getId();
+                if (mergedOrderItems.containsKey(menuItemId)) {
+                    OrderItemInfo orderItemInfo = mergedOrderItems.get(menuItemId);
+                    orderItemInfo.setQuantity(orderItemInfo.getQuantity() + item.getQuantity());
+                    orderItemInfo.setPrice(orderItemInfo.getPrice().add(item.getPrice()));
+                } else {
+                    OrderItemInfo orderItemInfoNew = new OrderItemInfo();
+                    orderItemInfoNew.setId(item.getId());
+                    orderItemInfoNew.setQuantity(item.getQuantity());
+                    orderItemInfoNew.setPrice(item.getPrice());
+                    orderItemInfoNew.setOrderItemName(item.getMenuItem().getName());
+                    mergedOrderItems.put(menuItemId, orderItemInfoNew);
+                }
+            }
+        }
+
+        List<OrderItemInfo> allItems = new ArrayList<>(mergedOrderItems.values());
+        BigDecimal total = allItems.stream()
+                .map(OrderItemInfo::getPrice)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+
         table.setTableStatus(TableStatus.FREE);
-        order.setPaidAt(LocalDateTime.now());
-        Orders savedOrder = orderRepository.save(order);
+        orderRepository.saveAll(orders);
 
-        OrderCheckoutInfo orderCheckoutInfo = modelMapper.map(savedOrder, OrderCheckoutInfo.class);
-        orderCheckoutInfo.setTableNumber(savedOrder.getRestaurantTable().getNumber());
-        orderCheckoutInfo.setRestaurantTableId(savedOrder.getRestaurantTable().getId());
-        List<OrderItemInfo> items = savedOrder.getItems().stream()
-                .map(item -> {
-                    OrderItemInfo info = modelMapper.map(item, OrderItemInfo.class);
-                    info.setOrderItemName(item.getMenuItem().getName());
-                    return info;
-                }).toList();
-
-        orderCheckoutInfo.setItems(items);
+        OrderCheckoutInfo orderCheckoutInfo = new OrderCheckoutInfo();
+        orderCheckoutInfo.setRestaurantTableId(table.getId());
+        orderCheckoutInfo.setTableNumber(table.getNumber());
+        orderCheckoutInfo.setTotalPrice(total);
+        orderCheckoutInfo.setItems(allItems);
+        orderCheckoutInfo.setStatus(OrderStatus.PAID);
+        orderCheckoutInfo.setPaidAt(LocalDateTime.now());
+        orderCheckoutInfo.setId(orderId);
         return orderCheckoutInfo;
     }
 }
