@@ -1,6 +1,7 @@
 package com.example.restaurant.service;
 
 import com.example.restaurant.dto.*;
+import com.example.restaurant.exceptionhandling.OrderAlreadyPaidException;
 import com.example.restaurant.exceptionhandling.OrderItemNotFoundException;
 import com.example.restaurant.exceptionhandling.OrderNotFoundException;
 import com.example.restaurant.model.*;
@@ -47,6 +48,11 @@ public class OrderService {
         return orderItemInfo;
     }
 
+    private void validateNotPaid(Orders order) {
+        if (order.getStatus() == OrderStatus.PAID) {
+            throw new OrderAlreadyPaidException(order.getId());
+        }
+    }
     public OrderItem findOrderItemById(Long id){
         return orderItemRepository.findById(id).orElseThrow(()->new OrderItemNotFoundException(id));
     }
@@ -104,23 +110,23 @@ public class OrderService {
 
     public void delete(Long id) {
         Orders orders = findById(id);
+        validateNotPaid(orders);
         orderRepository.delete(orders);
     }
 
     public OrderUpdateStatusInfo updateOrderStatus(Long id, OrderStatusUpdateCommand command) {
-        Orders orders = findById(id);
-        orders.setStatus(command.getOrderStatus());
-        orderRepository.save(orders);
-        OrderUpdateStatusInfo orderUpdateStatusInfo = modelMapper.map(orders, OrderUpdateStatusInfo.class);
+        Orders order = findById(id);
+        validateNotPaid(order);
+        order.setStatus(command.getOrderStatus());
+        orderRepository.save(order);
+        OrderUpdateStatusInfo orderUpdateStatusInfo = modelMapper.map(order, OrderUpdateStatusInfo.class);
         orderUpdateStatusInfo.setOrderStatus(command.getOrderStatus());
         return orderUpdateStatusInfo;
     }
 
     public OrderCheckoutInfo checkout(Long orderId) {
         Orders order = findById(orderId);
-        if (order.getStatus() == OrderStatus.PAID) {
-            throw new IllegalStateException("Order already paid");
-        }
+        validateNotPaid(order);
         order.setStatus(OrderStatus.PAID);
         RestaurantTable table = order.getRestaurantTable();
         table.setTableStatus(TableStatus.FREE);
