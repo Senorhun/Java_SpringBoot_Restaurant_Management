@@ -1,11 +1,16 @@
 package com.example.restaurant.repository;
 
 
+import com.example.restaurant.model.OrderStatus;
 import com.example.restaurant.model.Orders;
+import com.example.restaurant.model.RestaurantTable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
+
+import java.util.List;
 
 @Repository
 public interface OrderRepository extends JpaRepository<Orders, Long> {
 
+    List<Orders> findByRestaurantTableAndStatus(RestaurantTable table, OrderStatus orderStatus);
 }
