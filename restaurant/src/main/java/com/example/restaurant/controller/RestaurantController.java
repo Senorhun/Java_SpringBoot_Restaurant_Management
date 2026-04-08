@@ -41,7 +41,8 @@ public class RestaurantController {
     }
     @GetMapping("/{restaurantId}/employees")
     public List<EmployeeInfo> getEmployeesByRestaurant(@PathVariable Long restaurantId) {
-        return restaurantService.getEmployeesByRestaurant(restaurantId);
+        List<EmployeeInfo> employeeInfoList = restaurantService.getEmployeesByRestaurant(restaurantId);
+        return new ResponseEntity<>(employeeInfoList,HttpStatus.OK).getBody();
     }
     @PostMapping("/table")
     public ResponseEntity<TableInfo> installTable(@Valid @RequestBody TableCreateCommand command){
@@ -58,7 +59,7 @@ public class RestaurantController {
         TableInfo tableInfo = restaurantService.getTableById(id);
         return new ResponseEntity<>(tableInfo,HttpStatus.OK);
     }
-    @DeleteMapping("/table/{id}")
+    @DeleteMapping("/table/{id}")   // no validation of  id
     public ResponseEntity<Void> deleteTable(@PathVariable Long id){
         restaurantService.deleteTable(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);

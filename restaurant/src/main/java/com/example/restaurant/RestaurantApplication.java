@@ -16,7 +16,7 @@ public class RestaurantApplication {
 		SpringApplication.run(RestaurantApplication.class, args);
 	}
 	@Bean
-	CommandLineRunner init(AppUserRepository repo, PasswordEncoder encoder) {
+	CommandLineRunner initAdmin(AppUserRepository repo, PasswordEncoder encoder) {
 		return args -> {
 			if (repo.findByEmail("admin@test.com").isEmpty()) {
 				AppUser admin = new AppUser();
@@ -24,6 +24,30 @@ public class RestaurantApplication {
 				admin.setPassword(encoder.encode("this-is-a-very-long-secret-key-for-jwt-token"));
 				admin.setAppUserRole(AppUserRole.ADMIN);
 				repo.save(admin);
+			}
+		};
+	}
+	@Bean
+	CommandLineRunner initStaff(AppUserRepository repo, PasswordEncoder encoder) {
+		return args -> {
+			if (repo.findByEmail("staff@test.com").isEmpty()) {
+				AppUser staff = new AppUser();
+				staff.setEmail("staff@test.com");
+				staff.setPassword(encoder.encode("this-is-a-very-long-secret-key-for-jwt-token"));
+				staff.setAppUserRole(AppUserRole.STAFF);
+				repo.save(staff);
+			}
+		};
+	}
+	@Bean
+	CommandLineRunner initManager(AppUserRepository repo, PasswordEncoder encoder) {
+		return args -> {
+			if (repo.findByEmail("manager@test.com").isEmpty()) {
+				AppUser manager = new AppUser();
+				manager.setEmail("manager@test.com");
+				manager.setPassword(encoder.encode("this-is-a-very-long-secret-key-for-jwt-token"));
+				manager.setAppUserRole(AppUserRole.MANAGER);
+				repo.save(manager);
 			}
 		};
 	}

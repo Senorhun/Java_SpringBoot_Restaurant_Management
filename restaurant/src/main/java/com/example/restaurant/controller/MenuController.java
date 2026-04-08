@@ -39,12 +39,12 @@ public class MenuController {
         Page<MenuItemInfo> items = menuService.getAvailableMenuItems(page, size);
         return new ResponseEntity<>(items, HttpStatus.OK);
     }
-    @GetMapping("/type")
+    @GetMapping("/menuItems/type")      // paginator
     public ResponseEntity<List<MenuItemInfo>> findByType(@RequestParam(value = "type") MenuItemType type) {
         List<MenuItemInfo> menuItemInfos = menuService.getByType(type);
         return new ResponseEntity<>(menuItemInfos, HttpStatus.OK);
     }
-    @GetMapping("/available")
+    @GetMapping("/menuItems/available")     // redundant
     public ResponseEntity<List<MenuItemInfo>> findAllAvailable() {
         List<MenuItemInfo> menuItemInfos = menuService.findAllAvailable();
         return new ResponseEntity<>(menuItemInfos, HttpStatus.OK);
@@ -54,7 +54,7 @@ public class MenuController {
         MenuItemInfo menuItemInfo = menuService.updateAvailability(id, command);
         return new ResponseEntity<>(menuItemInfo, HttpStatus.OK);
     }
-    @GetMapping("/{id}")
+    @GetMapping("/find/{id}")
     public ResponseEntity<MenuItemInfo> findById(@PathVariable Long id) {
         MenuItemInfo menuItemInfo = menuService.getMenuItemById(id);
         return new ResponseEntity<>(menuItemInfo, HttpStatus.OK);

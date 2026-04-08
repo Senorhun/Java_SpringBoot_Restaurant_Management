@@ -63,7 +63,11 @@ public class RestaurantService {
         findById(restaurantId);
         return employeeRepository.findByRestaurantId(restaurantId)
                 .stream()
-                .map(employee -> modelMapper.map(employee, EmployeeInfo.class))
+                .map(employee -> {
+                    EmployeeInfo employeeInfo = modelMapper.map(employee, EmployeeInfo.class);
+                    employeeInfo.setRestaurantName(employee.getRestaurant().getName());
+                    return employeeInfo;
+                })
                 .toList();
     }
 
