@@ -41,7 +41,8 @@ public class RestaurantController {
     }
     @GetMapping("/{restaurantId}/employees")
     public List<EmployeeInfo> getEmployeesByRestaurant(@PathVariable Long restaurantId) {
-        return restaurantService.getEmployeesByRestaurant(restaurantId);
+        List<EmployeeInfo> employeeInfoList = restaurantService.getEmployeesByRestaurant(restaurantId);
+        return new ResponseEntity<>(employeeInfoList,HttpStatus.OK).getBody();
     }
     @PostMapping("/table")
     public ResponseEntity<TableInfo> installTable(@Valid @RequestBody TableCreateCommand command){

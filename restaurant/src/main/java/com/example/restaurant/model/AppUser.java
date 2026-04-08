@@ -4,25 +4,18 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import lombok.Data;
 
-@Data
 @Entity
-public class Employee {
+@Data
+public class AppUser {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String name;
-    @Column(unique = true)
-    private String nickname;
+
     @Column(unique = true)
     @Email
     private String email;
-
+    @Column(nullable = false)
+    private String password;
     @Enumerated(EnumType.STRING)
-    private EmployeeType employeeType;
-
-    @ManyToOne
-    @JoinColumn(name = "restaurant_id")
-    private Restaurant restaurant;
-
-
+    private AppUserRole appUserRole;
 }

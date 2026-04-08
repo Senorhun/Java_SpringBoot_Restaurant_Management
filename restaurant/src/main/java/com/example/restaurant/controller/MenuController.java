@@ -34,27 +34,23 @@ public class MenuController {
         List<MenuItemInfo> menuItemInfos = menuService.findAll();
         return new ResponseEntity<>(menuItemInfos, HttpStatus.OK);
     }
-    @GetMapping("/menuItems")
+    @GetMapping("/menuItems/available")
     public ResponseEntity<Page<MenuItemInfo>> getAvailableMenuItems(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "5") int size) {
         Page<MenuItemInfo> items = menuService.getAvailableMenuItems(page, size);
         return new ResponseEntity<>(items, HttpStatus.OK);
     }
-    @GetMapping("/type")
-    public ResponseEntity<List<MenuItemInfo>> findByType(@RequestParam(value = "type") MenuItemType type) {
-        List<MenuItemInfo> menuItemInfos = menuService.getByType(type);
+    @GetMapping("/menuItems/type/available")
+    public ResponseEntity<Page<MenuItemInfo>> findByType(@RequestParam(value = "type") MenuItemType type, @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "5") int size ) {
+        Page<MenuItemInfo> menuItemInfos = menuService.getByType(type, page, size);
         return new ResponseEntity<>(menuItemInfos, HttpStatus.OK);
     }
-    @GetMapping("/available")
-    public ResponseEntity<List<MenuItemInfo>> findAllAvailable() {
-        List<MenuItemInfo> menuItemInfos = menuService.findAllAvailable();
-        return new ResponseEntity<>(menuItemInfos, HttpStatus.OK);
-    }
+
     @PatchMapping("/{id}/available")
     public ResponseEntity<MenuItemInfo> updateAvailable(@PathVariable("id") Long id, @Valid @RequestBody MenuItemUpdateAvailabilityCommand command) {
         MenuItemInfo menuItemInfo = menuService.updateAvailability(id, command);
         return new ResponseEntity<>(menuItemInfo, HttpStatus.OK);
     }
-    @GetMapping("/{id}")
+    @GetMapping("/find/{id}")
     public ResponseEntity<MenuItemInfo> findById(@PathVariable Long id) {
         MenuItemInfo menuItemInfo = menuService.getMenuItemById(id);
         return new ResponseEntity<>(menuItemInfo, HttpStatus.OK);

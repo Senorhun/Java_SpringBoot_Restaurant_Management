@@ -11,6 +11,7 @@ import com.example.restaurant.model.TableStatus;
 import com.example.restaurant.repository.EmployeeRepository;
 import com.example.restaurant.repository.RestaurantRepository;
 import com.example.restaurant.repository.TableRepository;
+import jakarta.persistence.Table;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import org.modelmapper.ModelMapper;
@@ -63,7 +64,11 @@ public class RestaurantService {
         findById(restaurantId);
         return employeeRepository.findByRestaurantId(restaurantId)
                 .stream()
-                .map(employee -> modelMapper.map(employee, EmployeeInfo.class))
+                .map(employee -> {
+                    EmployeeInfo employeeInfo = modelMapper.map(employee, EmployeeInfo.class);
+                    employeeInfo.setRestaurantName(employee.getRestaurant().getName());
+                    return employeeInfo;
+                })
                 .toList();
     }
 
@@ -104,7 +109,8 @@ public class RestaurantService {
     }
 
     public void deleteTable(Long id) {
-        tableRepository.deleteById(id);
+        RestaurantTable restaurantTableToDelete = findTableById(id);
+        tableRepository.delete(restaurantTableToDelete);
     }
 
     public TableInfo updateTable(Long id, @Valid TableUpdateCommand command) {
