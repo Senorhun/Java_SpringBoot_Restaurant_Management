@@ -24,28 +24,14 @@ import java.util.Map;
 public class OrderService {
     private final OrderRepository orderRepository;
     private final ModelMapper modelMapper;
-    private final OrderItemRepository orderItemRepository;
     private final MenuService menuService;
     private final RestaurantService restaurantService;
 
-    public OrderService(OrderRepository orderRepository, OrderItemRepository orderItemRepository, MenuService menuService, RestaurantService restaurantService, ModelMapper modelMapper) {
+    public OrderService(OrderRepository orderRepository , MenuService menuService, RestaurantService restaurantService, ModelMapper modelMapper) {
         this.orderRepository = orderRepository;
         this.modelMapper = modelMapper;
-        this.orderItemRepository = orderItemRepository;
         this.menuService = menuService;
         this.restaurantService = restaurantService;
-    }
-
-    public OrderItemInfo saveOrderItem(@Valid OrderItemCreateCommand command) {
-        MenuItem menuItem = menuService.findById((long)command.getMenuItemId());
-        OrderItem orderItemToSave = new  OrderItem();
-        orderItemToSave.setMenuItem(menuItem);
-        orderItemToSave.setQuantity(command.getQuantity());
-        orderItemToSave.setPrice(menuItem.getPrice());
-        orderItemRepository.save(orderItemToSave);
-        OrderItemInfo orderItemInfo = modelMapper.map(orderItemToSave, OrderItemInfo.class);
-        orderItemInfo.setOrderItemName(menuItem.getName());
-        return orderItemInfo;
     }
 
     private void validateNotPaid(Orders order) {
@@ -53,19 +39,9 @@ public class OrderService {
             throw new OrderAlreadyPaidException(order.getId());
         }
     }
-    public OrderItem findOrderItemById(Long id){
-        return orderItemRepository.findById(id).orElseThrow(()->new OrderItemNotFoundException(id));
-    }
-    Orders findById(Long id){
+
+    private Orders findById(Long id){
         return  orderRepository.findById(id).orElseThrow(()->new OrderNotFoundException(id));
-    }
-    public OrderItemInfo updateOrderItemQuantity(Long id, @Valid OrderItemQuantityUpdateCommand command) {
-        OrderItem orderItemToUpdate = findOrderItemById(id);
-        orderItemToUpdate.setQuantity(command.getQuantity());
-        OrderItem savedOrderItem = orderItemRepository.save(orderItemToUpdate);
-        OrderItemInfo orderItemInfo = modelMapper.map(orderItemToUpdate, OrderItemInfo.class);
-        orderItemInfo.setOrderItemName(savedOrderItem.getMenuItem().getName());
-        return orderItemInfo;
     }
 
     public OrderInfo saveOrder(@Valid OrderCreateCommand command) {

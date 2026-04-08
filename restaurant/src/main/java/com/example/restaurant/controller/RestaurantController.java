@@ -59,7 +59,7 @@ public class RestaurantController {
         TableInfo tableInfo = restaurantService.getTableById(id);
         return new ResponseEntity<>(tableInfo,HttpStatus.OK);
     }
-    @DeleteMapping("/table/{id}")   // no validation of  id
+    @DeleteMapping("/table/{id}")
     public ResponseEntity<Void> deleteTable(@PathVariable Long id){
         restaurantService.deleteTable(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);

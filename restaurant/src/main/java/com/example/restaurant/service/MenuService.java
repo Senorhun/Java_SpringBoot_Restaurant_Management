@@ -19,6 +19,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.data.domain.Pageable;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -55,7 +56,16 @@ public class MenuService {
             return menuItemInfo;
         }).toList();
     }
+    public Page<MenuItemInfo> getByType(MenuItemType type, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by("name").ascending());
 
+        return menuRepository.findByMenuItemTypeAndAvailableTrue(type, pageable)
+                .map(menuItem -> {
+                    MenuItemInfo dto = modelMapper.map(menuItem, MenuItemInfo.class);
+                    dto.setRestaurantName(menuItem.getRestaurant().getName());
+                    return dto;
+                });
+    }
     public Page<MenuItemInfo> getAvailableMenuItems(int page, int size) {
         Pageable pageable = PageRequest.of(page, size, Sort.by("name").ascending());
         Page<MenuItem> menuItemsPage = menuRepository.findByAvailableTrue(pageable);
@@ -75,14 +85,6 @@ public class MenuService {
         menuItemInfo.setRestaurantName(menuItem.getRestaurant().getName());
         return menuItemInfo;
     }
-    public List<MenuItemInfo> getByType(MenuItemType type) {
-        List<MenuItem> menuItems = menuRepository.getByType(type);
-        return menuItems.stream().map(menuItem -> {
-            MenuItemInfo menuItemInfo = modelMapper.map(menuItem,MenuItemInfo.class);
-            menuItemInfo.setRestaurantName(menuItem.getRestaurant().getName());
-            return menuItemInfo;
-        }).toList();
-    }
 
     public MenuItemInfo updateMenuItem(Long id, @Valid MenuItemUpdateCommand command) {
         MenuItem menuItemToUpdate = findById(id);
@@ -97,16 +99,6 @@ public class MenuService {
     public void deleteById(Long id) {
         MenuItem menuItemToDelete = findById(id);
         menuRepository.delete(menuItemToDelete);
-    }
-
-    public List<MenuItemInfo> findAllAvailable() {
-        List<MenuItem> menuItems = menuRepository.findAll();
-        return menuItems.stream().filter(MenuItem::isAvailable)
-                .map(menuItem -> {
-                    MenuItemInfo menuItemInfo = modelMapper.map(menuItem,MenuItemInfo.class);
-                    menuItemInfo.setRestaurantName(menuItem.getRestaurant().getName());
-                    return menuItemInfo;
-                }).toList();
     }
 
     public MenuItemInfo updateAvailability(Long id, @Valid MenuItemUpdateAvailabilityCommand command) {

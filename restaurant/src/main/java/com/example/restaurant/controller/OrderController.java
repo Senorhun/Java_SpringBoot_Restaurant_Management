@@ -33,16 +33,6 @@ public class OrderController {
         OrderUpdateStatusInfo orderUpdateStatusInfo = orderService.updateOrderStatus(id, command);
         return new ResponseEntity<>(orderUpdateStatusInfo, HttpStatus.OK);
     }
-    @PostMapping("/orderItem")      // not needed
-    public ResponseEntity<OrderItemInfo> saveOrderItem(@Valid @RequestBody OrderItemCreateCommand command) {
-        OrderItemInfo orderItemInfo = orderService.saveOrderItem(command);
-        return new ResponseEntity<>(orderItemInfo, HttpStatus.CREATED);
-    }
-    @PatchMapping("/orderItem/{id}/quantity")   // not needed
-    public ResponseEntity<OrderItemInfo> updateOrderItemQuantity(@PathVariable("id") Long id, @Valid @RequestBody OrderItemQuantityUpdateCommand command){
-        OrderItemInfo orderItemInfo = orderService.updateOrderItemQuantity(id, command);
-        return new ResponseEntity<>(orderItemInfo, HttpStatus.OK);
-    }
     @GetMapping("/{id}/checkout")
     public ResponseEntity<OrderCheckoutInfo> checkout(@PathVariable("id") Long orderId){
         OrderCheckoutInfo orderCheckoutInfoInfo = orderService.checkout(orderId);

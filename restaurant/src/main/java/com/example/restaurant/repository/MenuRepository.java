@@ -12,10 +12,8 @@ import java.util.List;
 
 @Repository
 public interface MenuRepository extends JpaRepository<MenuItem,Long> {
-    @Query("select m from MenuItem m where m.menuItemType=:type and m.available=true")
-    List<MenuItem> getByType(@Param("type") MenuItemType type);
-
     boolean existsByNameIgnoreCase(String name);
     Page<MenuItem> findByAvailableTrue(Pageable pageable);
+    Page<MenuItem> findByMenuItemTypeAndAvailableTrue(MenuItemType type, Pageable pageable);
 
 }
