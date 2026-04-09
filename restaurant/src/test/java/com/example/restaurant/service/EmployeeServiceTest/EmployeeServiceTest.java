@@ -17,6 +17,8 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.modelmapper.ModelMapper;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -84,7 +86,41 @@ public class EmployeeServiceTest {
         employeeService.delete(id);
         verify(employeeRepository).delete(employee);
     }
+    @Test
+    void findAll_shouldReturnListOfEmployeeInfo_whenEmployeeExists() {
+        Long id1 = 1L;
+        Long id2 = 2L;
 
+        Restaurant restaurant1 = new Restaurant();
+        restaurant1.setName("BurgerGo");
+        Employee employee1 = new Employee();
+        employee1.setId(id1);
+        employee1.setRestaurant(restaurant1);
+
+        Employee employee2 = new Employee();
+        Restaurant restaurant2 = new Restaurant();
+        restaurant2.setName("PizzaGo");
+        employee2.setId(id2);
+        employee2.setRestaurant(restaurant2);
+
+        List<Employee> employees = new ArrayList<>();
+        employees.add(employee1);
+        employees.add(employee2);
+
+        EmployeeInfo employeeInfo1 = new EmployeeInfo();
+        EmployeeInfo employeeInfo2 = new EmployeeInfo();
+
+        when(employeeRepository.findAll()).thenReturn(employees);
+        when(modelMapper.map(employee1, EmployeeInfo.class)).thenReturn(employeeInfo1);
+        when(modelMapper.map(employee2, EmployeeInfo.class)).thenReturn(employeeInfo2);
+        List<EmployeeInfo> employeeInfos = employeeService.findAll();
+
+        assertEquals(2, employeeInfos.size());
+        assertTrue(employeeInfos.contains(employeeInfo1));
+        assertTrue(employeeInfos.contains(employeeInfo2));
+        assertEquals("BurgerGo", employeeInfo1.getRestaurantName());
+        assertEquals("PizzaGo", employeeInfo2.getRestaurantName());
+    }
 
 
 }
