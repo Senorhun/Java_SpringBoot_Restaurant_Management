@@ -2,10 +2,12 @@ package com.example.restaurant.service.EmployeeServiceTest;
 
 import com.example.restaurant.dto.EmployeeCreateCommand;
 import com.example.restaurant.dto.EmployeeInfo;
+import com.example.restaurant.dto.EmployeeUpdateCommand;
 import com.example.restaurant.exceptionhandling.EmployeeEmailDuplicateException;
 import com.example.restaurant.exceptionhandling.EmployeeNicknameDuplicateException;
 import com.example.restaurant.exceptionhandling.EmployeeNotFoundException;
 import com.example.restaurant.model.Employee;
+import com.example.restaurant.model.EmployeeType;
 import com.example.restaurant.model.Restaurant;
 import com.example.restaurant.repository.EmployeeRepository;
 import com.example.restaurant.service.EmployeeService;
@@ -53,7 +55,7 @@ public class EmployeeServiceTest {
         when(modelMapper.map(employee, EmployeeInfo.class)).thenReturn(employeeInfo);
         EmployeeInfo result = employeeService.getEmployeeById(id);
 
-        assertNotNull(employeeInfo);
+        assertNotNull(result);
         assertEquals("BurgerGo", result.getRestaurantName());
     }
     @Test
@@ -122,5 +124,75 @@ public class EmployeeServiceTest {
         assertEquals("PizzaGo", employeeInfo2.getRestaurantName());
     }
 
+    @Test
+    void updateEmployee_shouldReturnEmployeeInfo_whenEmployeeExists(){
+        Long employeeId = 1L;
+        Employee employeeToUpdate = new Employee();
+        employeeToUpdate.setId(employeeId);
+
+        EmployeeUpdateCommand command = new EmployeeUpdateCommand();
+        command.setRestaurantId(10L);
+
+        EmployeeInfo employeeInfo = new EmployeeInfo();
+
+        Restaurant restaurant = new Restaurant();
+        restaurant.setName("BurgerGo");
+
+        when(employeeRepository.findById(employeeId)).thenReturn(Optional.of(employeeToUpdate));
+        doNothing().when(modelMapper).map(command, employeeToUpdate);
+        when(modelMapper.map(employeeToUpdate, EmployeeInfo.class)).thenReturn(employeeInfo);
+        when(restaurantService.findById(command.getRestaurantId())).thenReturn(restaurant);
+
+        EmployeeInfo result = employeeService.updateEmployee(employeeId, command);
+        assertNotNull(result);
+        assertEquals("BurgerGo", result.getRestaurantName());
+    }
+    @Test
+    void getByType_shouldReturnListOfEmployeeInfo_whenEmployeeExists() {
+        Employee employee1 = new Employee();
+        employee1.setEmployeeType(EmployeeType.WAITER);
+        Restaurant restaurant =  new Restaurant();
+        restaurant.setName("BurgerGo");
+        employee1.setRestaurant(restaurant);
+
+        Employee employee2 = new Employee();
+        employee2.setEmployeeType(EmployeeType.WAITER);
+        employee2.setRestaurant(restaurant);
+
+        List<Employee> employees = new ArrayList<>();
+        employees.add(employee1);
+        employees.add(employee2);
+
+        EmployeeInfo employeeInfo1 = new EmployeeInfo();
+        EmployeeInfo employeeInfo2 = new EmployeeInfo();
+        when(employeeRepository.getByType(EmployeeType.WAITER)).thenReturn(employees);
+        when(modelMapper.map(employee1,EmployeeInfo.class)).thenReturn(employeeInfo1);
+        when(modelMapper.map(employee2,EmployeeInfo.class)).thenReturn(employeeInfo2);
+        List<EmployeeInfo> result = employeeService.getByType(EmployeeType.WAITER);
+        assertEquals(2,result.size());
+        assertEquals("BurgerGo", result.getFirst().getRestaurantName());
+    }
+    @Test
+    void getAll_shouldReturnListOfEmployeeInfo_whenEmployeeExists() {
+        Employee employee1 = new Employee();
+        Restaurant restaurant = new Restaurant();
+        restaurant.setName("BurgerGo");
+        employee1.setRestaurant(restaurant);
+        Employee employee2 = new Employee();
+        employee2.setRestaurant(restaurant);
+        List<Employee> employees = new ArrayList<>();
+        employees.add(employee1);
+        employees.add(employee2);
+
+        EmployeeInfo employeeInfo1 = new EmployeeInfo();
+        EmployeeInfo employeeInfo2 = new EmployeeInfo();
+        when(employeeRepository.findAll()).thenReturn(employees);
+        when(modelMapper.map(employee1,EmployeeInfo.class)).thenReturn(employeeInfo1);
+        when(modelMapper.map(employee2,EmployeeInfo.class)).thenReturn(employeeInfo2);
+        List<EmployeeInfo> result = employeeService.findAll();
+
+        assertEquals(2,result.size());
+        assertEquals("BurgerGo", result.getFirst().getRestaurantName());
+    }
 
 }
