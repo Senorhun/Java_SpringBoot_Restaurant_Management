@@ -13,6 +13,9 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.modelmapper.ModelMapper;
+
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -74,5 +77,28 @@ public class MenuServiceTest {
         MenuItemInfo result = menuService.getMenuItemById(id);
         assertNotNull(result);
         assertEquals("BurgerGo", result.getRestaurantName());
+    }
+    @Test
+    void findAll_shouldReturnMenuInfoList_whenMenuExists() {
+        MenuItem menuItem1 = new MenuItem();
+        MenuItem menuItem2 = new MenuItem();
+        Restaurant restaurant = new Restaurant();
+        restaurant.setName("BurgerGo");
+        menuItem1.setRestaurant(restaurant);
+        menuItem2.setRestaurant(restaurant);
+        List<MenuItem> menuItemList = new ArrayList<>();
+        menuItemList.add(menuItem1);
+        menuItemList.add(menuItem2);
+        MenuItemInfo menuItemInfo1 = new MenuItemInfo();
+        MenuItemInfo menuItemInfo2 = new MenuItemInfo();
+
+        when(menuRepository.findAll()).thenReturn(menuItemList);
+        when(modelMapper.map(menuItem1, MenuItemInfo.class)).thenReturn(menuItemInfo1);
+        when(modelMapper.map(menuItem2, MenuItemInfo.class)).thenReturn(menuItemInfo2);
+        List<MenuItemInfo> result = menuService.findAll();
+
+        assertNotNull(result);
+        assertEquals("BurgerGo", result.getFirst().getRestaurantName());
+        assertEquals(2, result.size());
     }
 }
