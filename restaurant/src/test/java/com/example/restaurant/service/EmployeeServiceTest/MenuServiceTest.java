@@ -2,21 +2,17 @@ package com.example.restaurant.service.EmployeeServiceTest;
 
 import com.example.restaurant.dto.MenuItemCreateCommand;
 import com.example.restaurant.dto.MenuItemInfo;
-import com.example.restaurant.exceptionhandling.MenuItemNameDuplicationException;
 import com.example.restaurant.model.MenuItem;
 import com.example.restaurant.model.Restaurant;
 import com.example.restaurant.repository.MenuRepository;
 import com.example.restaurant.service.MenuService;
 import com.example.restaurant.service.RestaurantService;
-import jakarta.validation.Valid;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.modelmapper.ModelMapper;
-
-import java.awt.*;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -64,4 +60,19 @@ public class MenuServiceTest {
 
     }
 
+    @Test
+    void getMenuItemById_shouldReturnMenuInfo_whenMenuExists() {
+        Long id = 1L;
+        MenuItem menuItem = new MenuItem();
+        menuItem.setId(id);
+        Restaurant restaurant = new Restaurant();
+        restaurant.setName("BurgerGo");
+        menuItem.setRestaurant(restaurant);
+        MenuItemInfo menuItemInfo = new MenuItemInfo();
+        when(menuRepository.findById(id)).thenReturn(Optional.of(menuItem));
+        when(modelMapper.map(menuItem, MenuItemInfo.class)).thenReturn(menuItemInfo);
+        MenuItemInfo result = menuService.getMenuItemById(id);
+        assertNotNull(result);
+        assertEquals("BurgerGo", result.getRestaurantName());
+    }
 }
