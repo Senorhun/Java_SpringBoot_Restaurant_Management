@@ -135,4 +135,29 @@ public class MenuServiceTest {
 
         verify(menuRepository).findByMenuItemTypeAndAvailableTrue(eq(type), any(Pageable.class));
     }
+    @Test
+    void getAvailableMenuItems_shouldReturnMenuItemInfo_whenMenuExists() {
+        Restaurant restaurant = new Restaurant();
+        restaurant.setName("BurgerGo");
+
+        MenuItem menuItem1 = new MenuItem();
+        menuItem1.setRestaurant(restaurant);
+        MenuItem menuItem2 = new MenuItem();
+        menuItem2.setRestaurant(restaurant);
+
+        List<MenuItem> items = List.of(menuItem1, menuItem2);
+        Page<MenuItem> page = new PageImpl<>(items);
+        MenuItemInfo menuItemInfo1 = new MenuItemInfo();
+        MenuItemInfo menuItemInfo2 = new MenuItemInfo();
+
+        when(menuRepository.findByAvailableTrue(any(Pageable.class))).thenReturn(page);
+        when(modelMapper.map(menuItem1, MenuItemInfo.class)).thenReturn(menuItemInfo1);
+        when(modelMapper.map(menuItem2, MenuItemInfo.class)).thenReturn(menuItemInfo2);
+
+        Page<MenuItemInfo> result = menuService.getAvailableMenuItems(0, 10);
+
+        assertEquals(2, result.getContent().size());
+        assertEquals("BurgerGo", result.getContent().getFirst().getRestaurantName());
+    }
+
 }
