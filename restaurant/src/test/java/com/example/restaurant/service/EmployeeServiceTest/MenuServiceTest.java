@@ -1,9 +1,6 @@
 package com.example.restaurant.service.EmployeeServiceTest;
 
-import com.example.restaurant.dto.EmployeeInfo;
-import com.example.restaurant.dto.MenuItemCreateCommand;
-import com.example.restaurant.dto.MenuItemInfo;
-import com.example.restaurant.dto.MenuItemUpdateCommand;
+import com.example.restaurant.dto.*;
 import com.example.restaurant.model.MenuItem;
 import com.example.restaurant.model.MenuItemType;
 import com.example.restaurant.model.Restaurant;
@@ -24,8 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -187,5 +183,37 @@ public class MenuServiceTest {
 
 
     }
+    @Test
+    void deleteMenuItem_shouldDeleteMenuItem_whenMenuExists() {
+        Long id = 1L;
+        MenuItem menuItemToDelete = new MenuItem();
+        menuItemToDelete.setId(id);
 
+        when(menuRepository.findById(id)).thenReturn(Optional.of(menuItemToDelete));
+        menuService.deleteById(id);
+        verify(menuRepository).delete(menuItemToDelete);
+    }
+    @Test
+    void updateMenuItemAvailability_shouldUpdateMenuItemAvailability_whenMenuExists() {
+        Long id = 1L;
+        MenuItem menuItemToUpdate = new MenuItem();
+        menuItemToUpdate.setId(id);
+
+        Restaurant restaurant = new Restaurant();
+        restaurant.setName("BurgerGo");
+        menuItemToUpdate.setRestaurant(restaurant);
+
+        MenuItemUpdateAvailabilityCommand command = new MenuItemUpdateAvailabilityCommand();
+        command.setAvailable(true);
+        MenuItemInfo menuItemInfo = new MenuItemInfo();
+
+        when(menuRepository.findById(id)).thenReturn(Optional.of(menuItemToUpdate));
+        when(menuRepository.save(menuItemToUpdate)).thenReturn(menuItemToUpdate);
+        when(modelMapper.map(menuItemToUpdate, MenuItemInfo.class)).thenReturn(menuItemInfo);
+
+        MenuItemInfo result = menuService.updateAvailability(id, command);
+        assertNotNull(result);
+        assertTrue(menuItemToUpdate.isAvailable());
+        assertEquals("BurgerGo", result.getRestaurantName());
+    }
 }
