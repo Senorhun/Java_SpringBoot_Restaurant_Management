@@ -1,7 +1,9 @@
 package com.example.restaurant.service.EmployeeServiceTest;
 
+import com.example.restaurant.dto.EmployeeInfo;
 import com.example.restaurant.dto.MenuItemCreateCommand;
 import com.example.restaurant.dto.MenuItemInfo;
+import com.example.restaurant.dto.MenuItemUpdateCommand;
 import com.example.restaurant.model.MenuItem;
 import com.example.restaurant.model.MenuItemType;
 import com.example.restaurant.model.Restaurant;
@@ -158,6 +160,32 @@ public class MenuServiceTest {
 
         assertEquals(2, result.getContent().size());
         assertEquals("BurgerGo", result.getContent().getFirst().getRestaurantName());
+    }
+    @Test
+    void updateMenuItem_shouldUpdateMenuItem_whenMenuExists() {
+        Long id = 1L;
+        MenuItem menuItemToUpdate = new MenuItem();
+        menuItemToUpdate.setId(id);
+
+        MenuItemUpdateCommand command = new MenuItemUpdateCommand();
+        command.setRestaurantId(10L);
+
+        MenuItemInfo menuItemInfo = new MenuItemInfo();
+
+        Restaurant restaurant = new Restaurant();
+        restaurant.setName("BurgerGo");
+
+
+        when(menuRepository.findById(id)).thenReturn(Optional.of(menuItemToUpdate));
+        doNothing().when(modelMapper).map(command, menuItemToUpdate);
+        when(modelMapper.map(menuItemToUpdate, MenuItemInfo.class)).thenReturn(menuItemInfo);
+        when(restaurantService.findById(command.getRestaurantId())).thenReturn(restaurant);
+
+        MenuItemInfo result =  menuService.updateMenuItem(id, command);
+        assertNotNull(result);
+        assertEquals("BurgerGo", result.getRestaurantName());
+
+
     }
 
 }
