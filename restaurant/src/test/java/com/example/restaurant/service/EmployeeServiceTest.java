@@ -1,4 +1,4 @@
-package com.example.restaurant.service.EmployeeServiceTest;
+package com.example.restaurant.service;
 
 import com.example.restaurant.dto.EmployeeCreateCommand;
 import com.example.restaurant.dto.EmployeeInfo;
