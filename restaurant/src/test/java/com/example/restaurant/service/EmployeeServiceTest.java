@@ -170,7 +170,7 @@ public class EmployeeServiceTest {
         when(modelMapper.map(employee2,EmployeeInfo.class)).thenReturn(employeeInfo2);
         List<EmployeeInfo> result = employeeService.getByType(EmployeeType.WAITER);
         assertEquals(2,result.size());
-        assertEquals("BurgerGo", result.getFirst().getRestaurantName());
+        assertEquals("BurgerGo", result.get(0).getRestaurantName());
     }
     @Test
     void getAll_shouldReturnListOfEmployeeInfo_whenEmployeeExists() {
@@ -192,7 +192,7 @@ public class EmployeeServiceTest {
         List<EmployeeInfo> result = employeeService.findAll();
 
         assertEquals(2,result.size());
-        assertEquals("BurgerGo", result.getFirst().getRestaurantName());
+        assertEquals("BurgerGo", result.get(0).getRestaurantName());
     }
 
 }
