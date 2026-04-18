@@ -11,7 +11,6 @@ import com.example.restaurant.model.TableStatus;
 import com.example.restaurant.repository.EmployeeRepository;
 import com.example.restaurant.repository.RestaurantRepository;
 import com.example.restaurant.repository.TableRepository;
-import jakarta.persistence.Table;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import org.modelmapper.ModelMapper;

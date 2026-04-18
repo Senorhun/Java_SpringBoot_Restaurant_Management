@@ -10,8 +10,6 @@ import com.example.restaurant.model.Employee;
 import com.example.restaurant.model.EmployeeType;
 import com.example.restaurant.model.Restaurant;
 import com.example.restaurant.repository.EmployeeRepository;
-import com.example.restaurant.service.EmployeeService;
-import com.example.restaurant.service.RestaurantService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
