@@ -5,8 +5,6 @@ import com.example.restaurant.model.MenuItem;
 import com.example.restaurant.model.MenuItemType;
 import com.example.restaurant.model.Restaurant;
 import com.example.restaurant.repository.MenuRepository;
-import com.example.restaurant.service.MenuService;
-import com.example.restaurant.service.RestaurantService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
