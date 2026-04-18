@@ -21,4 +21,4 @@ Production-ready Spring Boot REST API for managing restaurants, menus, orders, a
 * PostgreSQL integration with persistent storage
 
 ## Tech
-Java • Spring Boot • Spring Data JPA • Spring Security + JWT • Hibernate • PostgreSQL • Maven
+Java • Spring Boot • Spring Data JPA (Hibernate) • Spring Security (JWT) • PostgreSQL • Maven • JUnit • Mockito
