@@ -85,7 +85,7 @@ class RestaurantServiceIntegrationTest {
 		List<RestaurantTable> tables = tableRepository.findAll();
 		assertEquals(1, tables.size());
 
-		RestaurantTable saved = tables.getFirst();
+		RestaurantTable saved = tables.get(0);
 		assertEquals(TableStatus.FREE, saved.getTableStatus());
 		assertEquals(2, saved.getCapacity());
 	}

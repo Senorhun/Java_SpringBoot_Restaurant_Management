@@ -100,7 +100,7 @@ public class MenuServiceTest {
         List<MenuItemInfo> result = menuService.findAll();
 
         assertNotNull(result);
-        assertEquals("BurgerGo", result.getFirst().getRestaurantName());
+        assertEquals("BurgerGo", result.get(0).getRestaurantName());
         assertEquals(2, result.size());
     }
     @Test
@@ -129,7 +129,7 @@ public class MenuServiceTest {
 
         Page<MenuItemInfo> result = menuService.getByType(type, 0, 10);
         assertEquals(2, result.getContent().size());
-        assertEquals("BurgerGo", result.getContent().getFirst().getRestaurantName());
+        assertEquals("BurgerGo", result.getContent().get(0).getRestaurantName());
 
         verify(menuRepository).findByMenuItemTypeAndAvailableTrue(eq(type), any(Pageable.class));
     }
@@ -155,7 +155,7 @@ public class MenuServiceTest {
         Page<MenuItemInfo> result = menuService.getAvailableMenuItems(0, 10);
 
         assertEquals(2, result.getContent().size());
-        assertEquals("BurgerGo", result.getContent().getFirst().getRestaurantName());
+        assertEquals("BurgerGo", result.getContent().get(0).getRestaurantName());
     }
     @Test
     void updateMenuItem_shouldUpdateMenuItem_whenMenuExists() {
