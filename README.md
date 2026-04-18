@@ -16,4 +16,4 @@ Spring Boot REST API for managing restaurant menus and orders.
 * OrderItems managed within Order (no redundant endpoints)
 
 ## Tech
-Java • Spring Boot • Spring Data JPA • Spring Security • Hibernate
+Java • Spring Boot • Spring Data JPA (Hibernate) • Spring Security (JWT) • PostgreSQL • Maven • JUnit • Mockito
