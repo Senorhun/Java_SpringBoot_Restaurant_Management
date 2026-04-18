@@ -1,9 +1,9 @@
 # Restaurant Management System
 
-Production-ready Spring Boot REST API for managing restaurants, menus, orders, and staff with secure JWT-based authentication.
+Production-ready Spring Boot REST API for restaurant management with secure JWT-based authentication.
 
 ## Features
-* Full restaurant lifecycle management (restaurants, menus, staff)
+* Full restaurant management (restaurants, menus, orders, tables, staff)
 * Advanced menu browsing with pagination and filtering
 * Complex order handling with multiple items per order
 * Table-based checkout system (merge multiple orders into one transaction)
